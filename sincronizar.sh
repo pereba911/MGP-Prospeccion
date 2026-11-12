@@ -30,12 +30,28 @@ fi
 # 2. Ejecutar el script maestro de sincronización
 "$PYTHON_EXEC" "$DIR/actualizar_propiedades_marketplace.py"
 
+# 3. Auto-commit y push a GitHub si hay cambios
+echo ""
+echo "Verificando cambios para GitHub..."
+cd "$DIR"
+if [ -n "$(git status --porcelain)" ]; then
+    echo "Cambios detectados. Realizando commit y push autónomo a GitHub..."
+    git add .
+    FECHA_ACTUAL=$(date "+%Y-%m-%d %H:%M")
+    git commit -m "sync(auto): actualización semanal de inventario y paquetes [$FECHA_ACTUAL]"
+    git push origin main
+    echo "✓ Repositorio en GitHub sincronizado exitosamente (origin/main)."
+else
+    echo "✓ Repositorio al día. No hay cambios pendientes para subir a GitHub."
+fi
+
 echo ""
 echo "================================================================="
 echo "  SINCRONIZACIÓN COMPLETADA CON ÉXITO"
 echo "================================================================="
 echo "Archivos actualizados:"
-echo "  • Reporte Marketplace:      $DIR/relacion_propiedades_marketplace.md"
+echo "  • Reporte Marketplace:           $DIR/relacion_propiedades_marketplace.md"
 echo "  • Banco de Textos (Cero emojis): $DIR/descripciones_vigentes/descripciones_propiedades_vigentes.md"
-echo "  • Paquetes por Propiedad:   $DIR/propiedades/"
+echo "  • Paquetes por Propiedad:        $DIR/propiedades/"
+echo "  • Repositorio Remoto GitHub:     https://github.com/pereba911/MGP-Prospeccion"
 echo "================================================================="
