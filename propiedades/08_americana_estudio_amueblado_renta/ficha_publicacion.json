@@ -1,0 +1,33 @@
+{
+  "propiedad_id": "AMERICANA-EST-RNT",
+  "nombre_oficial": "Estudio Amueblado Todo Incluido en Colonia Americana",
+  "operacion": "Renta",
+  "tipo_inmueble": "departamento",
+  "precio": "$16,000 MXN / mes",
+  "ubicacion": "Colonia Americana / Chapultepec, Guadalajara",
+  "superficie": "45 m2 habitables",
+  "recamaras": 1,
+  "banos": 1,
+  "cocheras": 0,
+  "estado": "Activa",
+  "rutas_locales": {
+    "carpeta_raiz": "/Users/mac/Documents/MGP Prospeccion/propiedades/08_americana_estudio_amueblado_renta",
+    "descripciones": "/Users/mac/Documents/MGP Prospeccion/propiedades/08_americana_estudio_amueblado_renta/descripciones",
+    "fotografias": "/Users/mac/Documents/MGP Prospeccion/propiedades/08_americana_estudio_amueblado_renta/fotografias"
+  },
+  "estrategia_multigroup_poster": {
+    "listas_asignadas_obligatorias": [
+      "11. Solo Renta (Departamentos y Casas)",
+      "2. Venta y Renta (Inmuebles ZMG)",
+      "6. Zona Americana - Chapultepec - Lafayette",
+      "12. Inmobiliarios Generales y Asesores ZMG"
+    ],
+    "frecuencia_recomendada": "Semanal recurrente (2 veces por semana por grupo)",
+    "dias_rotacion_sugeridos": [
+      "Martes",
+      "Viernes"
+    ],
+    "delays_seguros_segundos": "90-180 segundos entre grupos",
+    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX"
+  }
+}

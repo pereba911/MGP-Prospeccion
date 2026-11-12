@@ -1,0 +1,123 @@
+{
+  "ultima_actualizacion": "2026-11-12 13:59:07",
+  "total_publicaciones": 13,
+  "propiedades": [
+    {
+      "titulo": "Oportunidad de RENTA Unico en Country",
+      "precio": "MX$44.900",
+      "estado": "Disponible",
+      "tipo_operacion": "renta",
+      "clics": "22",
+      "fecha_publicacion": "21/10 Publicado en Marketplace y al menos 1 grupo",
+      "canales": "Marketplace y grupos"
+    },
+    {
+      "titulo": "RENTA Amueblado UNICO en Country Club",
+      "precio": "MX$44.900",
+      "estado": "Disponible",
+      "tipo_operacion": "renta",
+      "clics": "10",
+      "fecha_publicacion": "21/10 Publicado en Marketplace y al menos 1 grupo",
+      "canales": "Marketplace y grupos"
+    },
+    {
+      "titulo": "Oportunidad Depto Amueblado Country",
+      "precio": "MX$44.900",
+      "estado": "Disponible",
+      "tipo_operacion": "renta",
+      "clics": "4",
+      "fecha_publicacion": "21/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    },
+    {
+      "titulo": "3 habitaciones 3 baños Departamento",
+      "precio": "MX$44.900",
+      "estado": "Activo",
+      "tipo_operacion": "renta",
+      "clics": "6",
+      "fecha_publicacion": "21/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    },
+    {
+      "titulo": "Remate CAFETERA PARA ESPRESSO",
+      "precio": "MX$1.490",
+      "estado": "Disponible",
+      "tipo_operacion": "articulo",
+      "clics": "6",
+      "fecha_publicacion": "10/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    },
+    {
+      "titulo": "PROMOCIÓN Cafetera p/ tu negocio",
+      "precio": "MX$1.500",
+      "estado": "Disponible",
+      "tipo_operacion": "articulo",
+      "clics": "8",
+      "fecha_publicacion": "10/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    },
+    {
+      "titulo": "OFERTA Cafetera Espresso",
+      "precio": "MX$1.500",
+      "estado": "Disponible",
+      "tipo_operacion": "articulo",
+      "clics": "19",
+      "fecha_publicacion": "10/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    },
+    {
+      "titulo": "APROVECHA EL MEJOR PRECIO Colinas",
+      "precio": "MX$13.800.000",
+      "estado": "Disponible",
+      "tipo_operacion": "venta",
+      "clics": "1.412",
+      "fecha_publicacion": "8/10 Publicado en Marketplace y al menos 1 grupo",
+      "canales": "Marketplace y grupos"
+    },
+    {
+      "titulo": "PRECIO UNICO EN COLINAS casa 273m2",
+      "precio": "MX$13.900.000",
+      "estado": "Disponible",
+      "tipo_operacion": "venta",
+      "clics": "226",
+      "fecha_publicacion": "8/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    },
+    {
+      "titulo": "OPORTUNIDAD UNICA Colinas de San Javier",
+      "precio": "MX$13.900.000",
+      "estado": "Disponible",
+      "tipo_operacion": "venta",
+      "clics": "296",
+      "fecha_publicacion": "8/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    },
+    {
+      "titulo": "3 habitaciones 4 baños Departamento",
+      "precio": "MX$13.800.000",
+      "estado": "Activo",
+      "tipo_operacion": "venta",
+      "clics": "15",
+      "fecha_publicacion": "8/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    },
+    {
+      "titulo": "3 habitaciones 3.5 baños Departamento",
+      "precio": "MX$45.000",
+      "estado": "Activo",
+      "tipo_operacion": "renta",
+      "clics": "25",
+      "fecha_publicacion": "2/10 Publicado en Marketplace y al menos 1 grupo",
+      "canales": "Marketplace y grupos"
+    },
+    {
+      "titulo": "3 habitaciones 3,5 baños - Departamento",
+      "precio": "MX$45.000",
+      "estado": "Disponible",
+      "tipo_operacion": "renta",
+      "clics": "2",
+      "fecha_publicacion": "2/10 Publicado en Marketplace",
+      "canales": "Marketplace"
+    }
+  ]
+}

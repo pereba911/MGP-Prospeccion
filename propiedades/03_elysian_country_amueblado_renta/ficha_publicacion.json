@@ -1,0 +1,33 @@
+{
+  "propiedad_id": "ELYSIAN-COUNTRY-RNT",
+  "nombre_oficial": "Departamento Amueblado Resort Elysian High Country",
+  "operacion": "Renta",
+  "tipo_inmueble": "departamento",
+  "precio": "$44,900 MXN / mes",
+  "ubicacion": "Elysian High Country, Country Club, Guadalajara",
+  "superficie": "104.9 m2 habitables",
+  "recamaras": 3,
+  "banos": 3,
+  "cocheras": 2,
+  "estado": "Activa",
+  "rutas_locales": {
+    "carpeta_raiz": "/Users/mac/Documents/MGP Prospeccion/propiedades/03_elysian_country_amueblado_renta",
+    "descripciones": "/Users/mac/Documents/MGP Prospeccion/propiedades/03_elysian_country_amueblado_renta/descripciones",
+    "fotografias": "/Users/mac/Documents/MGP Prospeccion/propiedades/03_elysian_country_amueblado_renta/fotografias"
+  },
+  "estrategia_multigroup_poster": {
+    "listas_asignadas_obligatorias": [
+      "11. Solo Renta (Departamentos y Casas)",
+      "2. Venta y Renta (Inmuebles ZMG)",
+      "7. Zona Providencia - Country Club - Colomos",
+      "12. Inmobiliarios Generales y Asesores ZMG"
+    ],
+    "frecuencia_recomendada": "Semanal recurrente (2 veces por semana por grupo)",
+    "dias_rotacion_sugeridos": [
+      "Martes",
+      "Viernes"
+    ],
+    "delays_seguros_segundos": "90-180 segundos entre grupos",
+    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX"
+  }
+}

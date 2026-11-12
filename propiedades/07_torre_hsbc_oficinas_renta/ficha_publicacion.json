@@ -1,0 +1,34 @@
+{
+  "propiedad_id": "TORRE-HSBC-OFI-RNT",
+  "nombre_oficial": "Oficinas Corporativas Piso Completo Torre HSBC (934 m2)",
+  "operacion": "Renta",
+  "tipo_inmueble": "oficina",
+  "precio": "$448,320 MXN / mes",
+  "ubicacion": "Torre HSBC, Corredor Financiero Americas / Providencia, Guadalajara",
+  "superficie": "934 m2 corporativos",
+  "recamaras": 0,
+  "banos": 4,
+  "cocheras": 15,
+  "estado": "Activa",
+  "rutas_locales": {
+    "carpeta_raiz": "/Users/mac/Documents/MGP Prospeccion/propiedades/07_torre_hsbc_oficinas_renta",
+    "descripciones": "/Users/mac/Documents/MGP Prospeccion/propiedades/07_torre_hsbc_oficinas_renta/descripciones",
+    "fotografias": "/Users/mac/Documents/MGP Prospeccion/propiedades/07_torre_hsbc_oficinas_renta/fotografias"
+  },
+  "estrategia_multigroup_poster": {
+    "listas_asignadas_obligatorias": [
+      "4. Oficinas y Corporativos",
+      "11. Solo Renta (Departamentos y Casas)",
+      "2. Venta y Renta (Inmuebles ZMG)",
+      "7. Zona Providencia - Country Club - Colomos",
+      "12. Inmobiliarios Generales y Asesores ZMG"
+    ],
+    "frecuencia_recomendada": "Semanal recurrente (2 veces por semana por grupo)",
+    "dias_rotacion_sugeridos": [
+      "Martes",
+      "Viernes"
+    ],
+    "delays_seguros_segundos": "90-180 segundos entre grupos",
+    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX"
+  }
+}

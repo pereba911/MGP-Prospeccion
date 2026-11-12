@@ -1,0 +1,12 @@
+# Fotografias Exclusivas para: Residencias Hyatt Regency Andares Puerta de Hierro
+Coloca aqui las fotografias correspondientes a esta propiedad en formato HD.
+
+Reglas de nomenclatura para el agente de publicacion:
+  01_portada_fachada.jpg  (Foto gancho inicial)
+  02_sala_comedor.jpg
+  03_cocina.jpg
+  04_recamara_principal.jpg
+  05_bano.jpg
+  06_amenidades.jpg
+
+Parametros tecnicos optimos: 2048 px lado mayor, formato JPG/PNG en sRGB.

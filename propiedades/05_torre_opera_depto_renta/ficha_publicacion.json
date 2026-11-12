@@ -1,0 +1,33 @@
+{
+  "propiedad_id": "TORRE-OPERA-RNT",
+  "nombre_oficial": "Departamento de Lujo en Torre Opera Puerta de Hierro",
+  "operacion": "Renta",
+  "tipo_inmueble": "departamento",
+  "precio": "$45,000 MXN / mes",
+  "ubicacion": "Torre Opera, Puerta de Hierro / Andares, Zapopan",
+  "superficie": "155 m2 habitables",
+  "recamaras": 3,
+  "banos": 3.5,
+  "cocheras": 2,
+  "estado": "Activa",
+  "rutas_locales": {
+    "carpeta_raiz": "/Users/mac/Documents/MGP Prospeccion/propiedades/05_torre_opera_depto_renta",
+    "descripciones": "/Users/mac/Documents/MGP Prospeccion/propiedades/05_torre_opera_depto_renta/descripciones",
+    "fotografias": "/Users/mac/Documents/MGP Prospeccion/propiedades/05_torre_opera_depto_renta/fotografias"
+  },
+  "estrategia_multigroup_poster": {
+    "listas_asignadas_obligatorias": [
+      "11. Solo Renta (Departamentos y Casas)",
+      "2. Venta y Renta (Inmuebles ZMG)",
+      "8. Zona Andares - Puerta de Hierro - Valle Real - Solares",
+      "12. Inmobiliarios Generales y Asesores ZMG"
+    ],
+    "frecuencia_recomendada": "Semanal recurrente (2 veces por semana por grupo)",
+    "dias_rotacion_sugeridos": [
+      "Martes",
+      "Viernes"
+    ],
+    "delays_seguros_segundos": "90-180 segundos entre grupos",
+    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX"
+  }
+}

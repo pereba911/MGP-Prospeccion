@@ -1,0 +1,33 @@
+{
+  "propiedad_id": "HYATT-ANDARES-RNT",
+  "nombre_oficial": "Residencias Hyatt Regency Andares Puerta de Hierro",
+  "operacion": "Renta",
+  "tipo_inmueble": "departamento",
+  "precio": "$57,500 MXN / mes",
+  "ubicacion": "Residencias Hyatt Regency, Andares, Zapopan",
+  "superficie": "125 m2 habitables",
+  "recamaras": 2,
+  "banos": 2,
+  "cocheras": 2,
+  "estado": "Activa",
+  "rutas_locales": {
+    "carpeta_raiz": "/Users/mac/Documents/MGP Prospeccion/propiedades/06_hyatt_regency_andares_renta",
+    "descripciones": "/Users/mac/Documents/MGP Prospeccion/propiedades/06_hyatt_regency_andares_renta/descripciones",
+    "fotografias": "/Users/mac/Documents/MGP Prospeccion/propiedades/06_hyatt_regency_andares_renta/fotografias"
+  },
+  "estrategia_multigroup_poster": {
+    "listas_asignadas_obligatorias": [
+      "11. Solo Renta (Departamentos y Casas)",
+      "2. Venta y Renta (Inmuebles ZMG)",
+      "8. Zona Andares - Puerta de Hierro - Valle Real - Solares",
+      "12. Inmobiliarios Generales y Asesores ZMG"
+    ],
+    "frecuencia_recomendada": "Semanal recurrente (2 veces por semana por grupo)",
+    "dias_rotacion_sugeridos": [
+      "Martes",
+      "Viernes"
+    ],
+    "delays_seguros_segundos": "90-180 segundos entre grupos",
+    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX"
+  }
+}

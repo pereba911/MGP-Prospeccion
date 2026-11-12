@@ -1,0 +1,32 @@
+{
+  "propiedad_id": "COUNTRY-CLUB-128-VTA",
+  "nombre_oficial": "Departamento de Lujo en Country Club Guadalajara",
+  "operacion": "Venta",
+  "tipo_inmueble": "departamento",
+  "precio": "$10,500,000 MXN",
+  "ubicacion": "Country Club, Guadalajara",
+  "superficie": "128 m2 habitables",
+  "recamaras": 3,
+  "banos": 4,
+  "cocheras": 2,
+  "estado": "Activa",
+  "rutas_locales": {
+    "carpeta_raiz": "/Users/mac/Documents/MGP Prospeccion/propiedades/02_country_club_depto_venta",
+    "descripciones": "/Users/mac/Documents/MGP Prospeccion/propiedades/02_country_club_depto_venta/descripciones",
+    "fotografias": "/Users/mac/Documents/MGP Prospeccion/propiedades/02_country_club_depto_venta/fotografias"
+  },
+  "estrategia_multigroup_poster": {
+    "listas_asignadas_obligatorias": [
+      "1. Solo Venta (Inmuebles ZMG)",
+      "7. Zona Providencia - Country Club - Colomos",
+      "12. Inmobiliarios Generales y Asesores ZMG"
+    ],
+    "frecuencia_recomendada": "Semanal recurrente (2 veces por semana por grupo)",
+    "dias_rotacion_sugeridos": [
+      "Lunes",
+      "Jueves"
+    ],
+    "delays_seguros_segundos": "90-180 segundos entre grupos",
+    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX"
+  }
+}
