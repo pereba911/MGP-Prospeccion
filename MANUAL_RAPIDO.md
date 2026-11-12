@@ -36,10 +36,26 @@ Para actualizar todo el proyecto cada dos semanas (o cada vez que agregues/venda
 
 ---
 
-## 3. Automatización Total con Cron (Opcional - Cada 2 Semanas)
+## 3. Automatización Total con Cron (Cada Lunes a las 9:00 AM)
 
-Si deseas que tu Mac ejecute la sincronización automáticamente los lunes a las 9:00 AM cada 14 días sin que tengas que abrir la terminal, puedes agregar esta línea a tu `crontab -e`:
+Para que tu Mac ejecute la sincronización automáticamente todos los lunes sin que tengas que abrir la terminal, agregamos esta línea a tu `crontab`:
 
 ```bash
-0 9 1,15 * * /Users/mac/Documents/MGP\ Prospeccion/sincronizar.sh > /dev/null 2>&1
+0 9 * * 1 /Users/mac/Documents/MGP\ Prospeccion/sincronizar.sh >> /Users/mac/Documents/MGP\ Prospeccion/sync.log 2>&1
 ```
+
+### ¿Qué hace la rutina autónoma de los lunes?
+1. Detecta si hay propiedades nuevas en Marketplace o cambios de estado.
+2. Regenera las variantes de texto profesionales sin emojis en `descripciones_vigentes/`.
+3. Actualiza y limpia las carpetas en `propiedades/`.
+4. **Auto-commit & push a GitHub:** Sube automáticamente los cambios al repositorio remoto en [https://github.com/pereba911/MGP-Prospeccion](https://github.com/pereba911/MGP-Prospeccion).
+
+---
+
+## 4. Repositorio GitHub y Sincronización Remota
+
+- **URL Oficial del Repositorio:** [https://github.com/pereba911/MGP-Prospeccion](https://github.com/pereba911/MGP-Prospeccion)
+- **Rama Principal:** `main`
+- **Autenticación:** SSH segura vinculada a tu cuenta `pereba911`.
+- **Régimen de respaldo:** Cada vez que corre `sincronizar.sh` (manual o por cron), si detecta cambios realiza `git commit` y `git push` de forma desatendida.
+
