@@ -2,3 +2,11 @@
 __pycache__/
 *.pyc
 .env
+.env
+status/
+autopush.log
+alertas.log
+.alert_state
+fotos_batch/
+portal_data.json
+propiedades/*/fotografias_procesadas/
