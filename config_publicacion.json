@@ -1,4 +1,4 @@
 {
-  "whatsapp_numero": "",
+  "whatsapp_numero": "523340088294",
   "descripcion": "Numero de WhatsApp en formato internacional, sin + ni espacios. Ejemplo: 523312345678. Si queda vacio, los textos usan el marcador {WHATSAPP_NUMERO} y el verificador lo reporta como pendiente."
 }
