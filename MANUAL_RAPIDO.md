@@ -114,7 +114,7 @@ La configuración vive en `.env` (permisos `600`). Hay dos proveedores:
 | `callmebot` | Gratuito y rápido | `CALLMEBOT_APIKEY` y `WHATSAPP_ALERTAS` |
 | `meta` | Oficial de WhatsApp | `META_WA_TOKEN`, `META_WA_PHONE_ID` y `WHATSAPP_ALERTAS` |
 
-Para CallMeBot: envía por WhatsApp el texto `I allow callmebot to send me messages` al **+34 644 51 95 23**. El bot responde con una API key; guárdala en `.env`:
+Para CallMeBot: envía por WhatsApp el texto `I allow callmebot to send me messages` al **+34 644 26 33 77**. El bot responde con una API key; guárdala en `.env`:
 
 ```bash
 WHATSAPP_PROVIDER=callmebot
