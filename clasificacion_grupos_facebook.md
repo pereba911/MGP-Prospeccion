@@ -18,8 +18,10 @@
 | **9. Zona Chapalita / Ciudad del Sol** | 7 | Propiedades en Chapalita y alrededores |
 | **10. Zona San Isidro / Cañadas** | 6 | Propiedades en zona Norte Zapopan |
 | **11. Solo Renta** | 41 | Propiedades exclusivamente en renta |
-| **12. Red Inmobiliaria / Asesores** | 76 | Colaboración entre inmobiliarias y brokers |
+| **12. Inmobiliarios Generales y Asesores ZMG** | 76 | Colaboración entre inmobiliarias y brokers |
 | **13. Grupos Descartados** | 35 | NO publicar inmuebles (autos, perfumes, etc.) |
+
+> **Cómo leer estos números:** hay 254 grupos analizados. Los 35 descartados no se publican, así que quedan 219 grupos únicos repartidos en las 12 listas operativas. La suma de la columna (324) es mayor porque un mismo grupo puede pertenecer a una lista temática y a una de zona. Los 27 grupos de El Salto / Tlajomulco ya están integrados en las listas 1, 2 y 3; no forman una lista separada.
 
 ---
 

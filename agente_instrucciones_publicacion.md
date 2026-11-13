@@ -9,7 +9,7 @@ El objetivo es mantener una presencia constante, rotativa y orgánica en las aud
 
 ## 2. Inventario de Listas Configuradas en Multigroup Poster
 
-Las listas generadas en el archivo [`listas_para_multigroup_poster.json`](file:///Users/mac/Documents/MGP%20Prospeccion/listas_para_multigroup_poster.json) deben cargarse en la extensión con las siguientes etiquetas:
+Las listas generadas en el archivo [`listas_para_multigroup_poster.json`](listas_para_multigroup_poster.json) deben cargarse en la extensión con las siguientes etiquetas:
 
 | ID Lista | Nombre de la Lista en MGP | Capacidad | Enfoque Principal |
 | :--- | :--- | :---: | :--- |
@@ -29,6 +29,8 @@ Las listas generadas en el archivo [`listas_para_multigroup_poster.json`](file:/
 > [!CAUTION]
 > **Lista Negra / Grupos Excluidos (35 grupos):**
 > Nunca programar inmuebles en grupos etiquetados como `descartados_no_inmobiliarios` (autos, compra-venta de perfumes, bolsa de valores GBM, espiritualidad, etc.). Publicar fuera de temática eleva los reportes de spam y arriesga la cuenta.
+>
+> La categoría 13 de `clasificacion_grupos_facebook.md` es esa lista negra. **No es una lista de MultiGroup Poster**: las listas operativas son exactamente las 12 de la tabla anterior.
 
 ---
 
@@ -40,14 +42,14 @@ El agente debe aplicar la siguiente lógica combinatoria al registrar una propie
 flowchart TD
     Prop[Nueva Propiedad Ingresada] --> Tipo{Tipo de Inmueble}
     
-    Tipo -->|Bodega o Nave| B[Lista: Bodegas y Naves Industriales]
-    Tipo -->|Oficina o Consultorio| O[Lista: Oficinas y Corporativos]
-    Tipo -->|Terreno o Macrolote| T[Lista: Terrenos y Lotes]
+    Tipo -->|Bodega o Nave| B[Lista 5 + 12]
+    Tipo -->|Oficina o Consultorio| O[Lista 4 + 12]
+    Tipo -->|Terreno o Macrolote| T[Lista 3 + 12]
     Tipo -->|Casa o Departamento| CD{Operación}
     
-    CD -->|En Venta| V[Lista: Solo Venta]
-    CD -->|En Renta| R[Lista: Solo Renta]
-    CD -->|Ambos Esquemas| M[Lista: Venta y Renta]
+    CD -->|En Venta| V[Lista 1 + zona + 12]
+    CD -->|En Renta| R[Lista 11 + 2 + zona + 12]
+    CD -->|Ambos Esquemas| M[Lista 2 + zona + 12]
     
     Prop --> Zona{Ubicación / Colonia}
     Zona -->|Americana / Chapu| ZA[Lista Adicional: Zona Americana]
@@ -55,42 +57,49 @@ flowchart TD
     Zona -->|Andares / Valle Real / Solares| ZW[Lista Adicional: Zona Andares - Valle Real]
     Zona -->|Chapalita / Tepeyac| ZC[Lista Adicional: Zona Chapalita]
     Zona -->|San Isidro / Cañadas| ZN[Lista Adicional: Zona San Isidro]
-    Zona -->|Otras Zonas ZMG| ZG[Lista Adicional: Red Inmobiliaria ZMG]
+    Zona -->|Otras Zonas ZMG| ZG[Lista 12. Inmobiliarios Generales y Asesores ZMG]
 ```
 
-### Regla de Asignación Dual:
-Toda propiedad residencial debe contar con **al menos 2 listas asignadas**:
-1. **La Lista Temática/Operación** (Ej. *1. Solo Venta*).
-2. **La Lista Geográfica Específica** (Ej. Si está en Col. Americana, agregar *6. Zona Americana - Chapultepec*).
+### Regla de Asignación Mínima:
+Toda propiedad residencial debe contar con **al menos 3 listas asignadas**:
+1. **La Lista Temática/Operación** (Ej. *1. Solo Venta* o *11. Solo Renta*).
+2. **La Lista Geográfica Específica** (Ej. *7. Zona Providencia - Country Club - Colomos*).
+3. **La Lista 12 de Colaboración** (*12. Inmobiliarios Generales y Asesores ZMG*).
+
+Si la zona no tiene lista geográfica propia, se usan la lista temática y la 12, y se registra la zona en la ficha para una futura lista.
 
 ---
 
 ## 4. Estándar de Redacción con Spintax y Variaciones
 
-Para evitar que Facebook marque los mensajes como repetitivos, el agente **SIEMPRE debe redactar el texto en formato Spintax**:
+Para evitar que Facebook marque los mensajes como repetitivos, el agente **SIEMPRE debe redactar el texto en formato Spintax**.
+
+**Estándar obligatorio: sin emojis.** Los textos de producción son profesionales y en texto plano. Las variantes de `descripciones_vigentes/` y de cada propiedad ya cumplen esta regla; no agregues emojis al publicar.
 
 ### Plantilla Modelo para Venta Residencial:
 ```text
-{Excelente oportunidad|Hermosa propiedad disponible|Magnífica inversión inmobiliaria} en {Guadalajara|Zapopan|la mejor zona de la ZMG}.
+{Oportunidad de venta|Propiedad disponible|Inversion inmobiliaria} en {Guadalajara|Zapopan|la mejor zona de la ZMG}.
 
-📍 {Ubicación privilegiada|Zona de alta plusvalía|Inmejorable localización}: [Nombre de la Colonia o Zona].
-🏡 {Características destacadas|Distribución|Espacios}:
-• [Número de Recámaras] {recámaras|habitaciones} {con clóset|con baño completo}.
-• [Número de Baños] {baños completos|baños}.
-• {Cochera para|Estacionamiento para} [X] {autos|vehículos}.
-• {Cocina integral equipada|Moderna cocina|Espacios amplios y luminosos}.
+Ubicacion: [Nombre de la Colonia o Zona].
+Caracteristicas:
+- [Numero de Recamaras] {recamaras|habitaciones} {con closet|con bano completo}.
+- [Numero de Banos] {banos completos|banos}.
+- {Cochera para|Estacionamiento para} [X] {autos|vehiculos}.
+- {Cocina integral equipada|Moderna cocina|Espacios amplios y luminosos}.
 
-💰 {Precio de venta|Inversión}: $[Precio] MXN.
-{Aceptamos y tramitamos créditos hipotecarios|Trato profesional y directo|Documentación en regla}.
+Precio: $[Precio] MXN.
+{Aceptamos y tramitamos creditos hipotecarios|Trato profesional y directo|Documentacion en regla}.
 
-📲 {Contáctame hoy mismo para más información o agendar visita|Envía mensaje directo o solicita fotos completas por WhatsApp al}: [Teléfono / WhatsApp].
+{Contactame hoy mismo para mas informacion o agendar visita|Envia mensaje directo o solicita fotos completas por WhatsApp}: [Telefono / WhatsApp].
 ```
 
 ### Estrategia de Primer Comentario Automático:
 El agente configurará el primer comentario de Multigroup Poster para colocar el enlace directo:
 ```text
-{¿Deseas más fotografías o la ficha técnica completa?|Para agendar un recorrido presencial}: Da clic directo en nuestro WhatsApp oficial 👉 https://wa.me/52XXXXXXXXXX?text=Hola,%20me%20interesa%20información%20de%20la%20propiedad
+{¿Deseas mas fotografias o la ficha tecnica completa?|Para agendar un recorrido presencial}: https://wa.me/{WHATSAPP_NUMERO}?text=Hola,%20me%20interesa%20informacion%20de%20la%20propiedad
 ```
+
+El valor `WHATSAPP_NUMERO` se toma de `config_publicacion.json` (formato internacional, sin `+` ni espacios). Si está vacío, **no se publica el comentario**: el verificador lo reporta como pendiente.
 
 ---
 

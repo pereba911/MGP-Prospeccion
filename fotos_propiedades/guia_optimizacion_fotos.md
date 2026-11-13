@@ -3,7 +3,7 @@
 ## 1. Estructura de Carpetas Creada en tu Mac
 
 Se ha creado la estructura dentro de este proyecto:
-📂 [`/Users/mac/Documents/MGP Prospeccion/fotos_propiedades/`](file:///Users/mac/Documents/MGP%20Prospeccion/fotos_propiedades/)
+[`fotos_propiedades/`](fotos_propiedades/)
 
 * `01_colinas_san_javier_venta/` -> Fotos de la residencia en Colinas ($13.8M)
 * `02_country_club_128m2_venta/` -> Fotos del depto en Country Club ($10.5M)
@@ -47,7 +47,7 @@ Facebook crea un mosaico visual con las primeras 4 fotos. Nombra tus fotos numé
 1. Abre tu carpeta en Finder: `/Users/mac/Documents/MGP Prospeccion/fotos_propiedades/[propiedad]/`.
 2. En la pestaña de **MultiGroup Poster** en Chrome, ve al creador de posts.
 3. Selecciona las fotos del Finder y arrástralas directamente al recuadro de fotos.
-4. Pega la descripción de la propiedad tomada de [`descripciones_vigentes/`](file:///Users/mac/Documents/MGP%20Prospeccion/descripciones_vigentes/).
+4. Pega la descripción de la propiedad tomada de [`descripciones_vigentes/`](../descripciones_vigentes/).
 
 ### Método B: Automatizado vía Agente (Recomendado para el Agente Autónomo)
 MultiGroup Poster incluye la herramienta nativa `add_media_from_url`. Si las fotos están alojadas en enlaces públicos HTTPS (por ejemplo, desde EasyBroker CDN, Google Drive público o un hosting web):

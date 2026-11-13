@@ -11,9 +11,9 @@
   "cocheras": 2,
   "estado": "Activa",
   "rutas_locales": {
-    "carpeta_raiz": "/Users/mac/Documents/MGP Prospeccion/propiedades/04_country_club_200m2_renta",
-    "descripciones": "/Users/mac/Documents/MGP Prospeccion/propiedades/04_country_club_200m2_renta/descripciones",
-    "fotografias": "/Users/mac/Documents/MGP Prospeccion/propiedades/04_country_club_200m2_renta/fotografias"
+    "carpeta_raiz": "propiedades/04_country_club_200m2_renta",
+    "descripciones": "propiedades/04_country_club_200m2_renta/descripciones",
+    "fotografias": "propiedades/04_country_club_200m2_renta/fotografias"
   },
   "estrategia_multigroup_poster": {
     "listas_asignadas_obligatorias": [
@@ -28,6 +28,6 @@
       "Viernes"
     ],
     "delays_seguros_segundos": "90-180 segundos entre grupos",
-    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX"
+    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/{WHATSAPP_NUMERO}"
   }
 }

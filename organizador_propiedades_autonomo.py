@@ -17,10 +17,23 @@ import os
 import re
 import shutil
 
-BASE_DIR = '/Users/mac/Documents/MGP Prospeccion'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROPIEDADES_DIR = os.path.join(BASE_DIR, 'propiedades')
 MARKETPLACE_JSON = os.path.join(BASE_DIR, 'propiedades_marketplace.json')
 LISTAS_MGP_JSON = os.path.join(BASE_DIR, 'listas_para_multigroup_poster.json')
+CONFIG_PUBLICACION = os.path.join(BASE_DIR, 'config_publicacion.json')
+
+
+def whatsapp_url():
+    """Devuelve la URL de WhatsApp configurada o un marcador visible si falta."""
+    numero = ''
+    try:
+        with open(CONFIG_PUBLICACION, encoding='utf-8') as fh:
+            numero = str(json.load(fh).get('whatsapp_numero', '')).strip()
+    except Exception:
+        numero = ''
+    numero = re.sub(r'\D', '', numero)
+    return 'https://wa.me/%s' % numero if numero else 'https://wa.me/{WHATSAPP_NUMERO}'
 
 def clean_no_emojis(text):
     emoji_pattern = re.compile(
@@ -610,16 +623,16 @@ def main():
             'cocheras': prop['cocheras'],
             'estado': 'Activa',
             'rutas_locales': {
-                'carpeta_raiz': folder_path,
-                'descripciones': desc_path,
-                'fotografias': fotos_path
+                'carpeta_raiz': os.path.relpath(folder_path, BASE_DIR),
+                'descripciones': os.path.relpath(desc_path, BASE_DIR),
+                'fotografias': os.path.relpath(fotos_path, BASE_DIR)
             },
             'estrategia_multigroup_poster': {
                 'listas_asignadas_obligatorias': routing_lists,
                 'frecuencia_recomendada': 'Semanal recurrente (2 veces por semana por grupo)',
                 'dias_rotacion_sugeridos': ['Lunes', 'Jueves'] if prop['operacion'].lower() == 'venta' else ['Martes', 'Viernes'],
                 'delays_seguros_segundos': '90-180 segundos entre grupos',
-                'primer_comentario_whatsapp': 'Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX'
+                'primer_comentario_whatsapp': 'Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: ' + whatsapp_url()
             }
         }
         ficha_file = os.path.join(folder_path, "ficha_publicacion.json")

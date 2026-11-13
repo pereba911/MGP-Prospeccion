@@ -20,7 +20,7 @@ import sys
 from datetime import datetime
 
 CDP_PORT_FILE = os.path.expanduser('~/Library/Application Support/Google/Chrome/DevToolsActivePort')
-OUTPUT_DIR = '/Users/mac/Documents/MGP Prospeccion'
+OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class BackgroundCDP:
     def __init__(self, retries=3, delay=1.5):

@@ -11,9 +11,9 @@
   "cocheras": 2,
   "estado": "Activa",
   "rutas_locales": {
-    "carpeta_raiz": "/Users/mac/Documents/MGP Prospeccion/propiedades/02_country_club_depto_venta",
-    "descripciones": "/Users/mac/Documents/MGP Prospeccion/propiedades/02_country_club_depto_venta/descripciones",
-    "fotografias": "/Users/mac/Documents/MGP Prospeccion/propiedades/02_country_club_depto_venta/fotografias"
+    "carpeta_raiz": "propiedades/02_country_club_depto_venta",
+    "descripciones": "propiedades/02_country_club_depto_venta/descripciones",
+    "fotografias": "propiedades/02_country_club_depto_venta/fotografias"
   },
   "estrategia_multigroup_poster": {
     "listas_asignadas_obligatorias": [
@@ -27,6 +27,6 @@
       "Jueves"
     ],
     "delays_seguros_segundos": "90-180 segundos entre grupos",
-    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/52XXXXXXXXXX"
+    "primer_comentario_whatsapp": "Para recibir mas fotografias o agendar recorrido presencial, contactanos via WhatsApp directo: https://wa.me/{WHATSAPP_NUMERO}"
   }
 }

@@ -20,7 +20,13 @@ echo "  MGP PROSPECCIÓN INMOBILIARIA - SINCRONIZADOR DEL AGENTE"
 echo "================================================================="
 echo "Iniciando proceso en segundo plano..."
 
-# 1. Verificar que Chrome esté abierto
+# 1. Verificar que Chrome esté abierto con CDP disponible
+if [ ! -f "$HOME/Library/Application Support/Google/Chrome/DevToolsActivePort" ]; then
+    echo "Aviso: Chrome no expone DevTools en esta Mac."
+    echo "Abre Google Chrome con la sesión de Facebook y vuelve a intentarlo."
+    echo "Este comando debe ejecutarse en la Mac, no en la VM."
+    exit 1
+fi
 if ! pgrep -i "Google Chrome" > /dev/null; then
     echo "Aviso: Google Chrome no parece estar en ejecución."
     echo "Por favor abre Google Chrome e inténtalo de nuevo."
@@ -39,6 +45,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git add .
     FECHA_ACTUAL=$(date "+%Y-%m-%d %H:%M")
     git commit -m "sync(auto): actualización semanal de inventario y paquetes [$FECHA_ACTUAL]"
+    git pull --rebase --autostash origin main
     git push origin main
     echo "✓ Repositorio en GitHub sincronizado exitosamente (origin/main)."
 else

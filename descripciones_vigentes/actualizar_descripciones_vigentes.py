@@ -10,7 +10,7 @@ import json
 import os
 import sys
 
-BASE_DIR = '/Users/mac/Documents/MGP Prospeccion'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUT_DIR = os.path.join(BASE_DIR, 'descripciones_vigentes')
 
 sys.path.insert(0, BASE_DIR)

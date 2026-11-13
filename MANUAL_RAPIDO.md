@@ -20,20 +20,24 @@ Se abrirá automáticamente en `http://127.0.0.1:8765`.
 
 ### Qué muestra
 - Estado real de cada proceso: repo, autopush, alert-bot, data-collector, los 3 lotes de fotos, scheduler y Chrome/MultiGroup.
+- Estado local de los 10 agentes y del modelo gratuito que tiene asignado cada uno.
+- Si falta el número de WhatsApp en `config_publicacion.json`.
 - Si el cron está activo, si hay commits sin subir y si GitHub está bloqueando el push.
 - Logs de `autopush` y de alertas.
 - Fotos totales y procesadas, espacio en disco y uptime de la VM.
 
 ### Botones
-| Botón | Qué hace |
-| :--- | :--- |
-| **Encender automatización** | Instala el cron de autopush (lunes 10:00) y alert-bot (cada 5 min) en la VM. |
-| **Detener** | Quita esas dos tareas del cron (no borra archivos ni historial). |
-| **Ejecutar autopush ahora** | Corre `autopush.sh` de inmediato y reporta el resultado. |
-| **Actualizar inventario** | Ejecuta `actualizar_propiedades_marketplace.py` en la VM. |
-| **Regenerar datos y fotos** | Ejecuta `procesar_fotos.py --todo`. |
-| **Validar scripts y cron** | Revisa sintaxis de los scripts y confirma las entradas de cron. |
-| **Configurar token** | Guarda un nuevo token de GitHub en `.env` (permisos 600). |
+| Botón | Dónde corre | Qué hace |
+| :--- | :--- | :--- |
+| **Encender automatización** | VM | Instala el cron de autopush (lunes 10:00) y alert-bot (cada 5 min). |
+| **Detener** | VM | Quita esas dos tareas del cron (no borra archivos ni historial). |
+| **Ejecutar autopush ahora** | VM | Corre `autopush.sh` de inmediato y reporta el resultado. |
+| **Actualizar inventario** | Mac | Ejecuta `actualizar_propiedades_marketplace.py` con el Chrome local. |
+| **Regenerar datos y fotos** | VM | Ejecuta `procesar_fotos.py --todo`. |
+| **Validar scripts y cron** | VM | Revisa sintaxis de los scripts y confirma las entradas de cron. |
+| **Verificar agentes** | Mac | Ejecuta `agents/verificar_agentes.py`. |
+| **Cambiar modelo (cuota)** | Mac | Pasa todos los agentes al siguiente modelo gratuito. |
+| **Configurar token** | VM | Guarda un nuevo token de GitHub en `.env` (permisos 600). |
 
 ### Requisito
 La Mac debe poder entrar a la VM sin contraseña:
@@ -59,7 +63,14 @@ Hace lo siguiente:
 4. Regenera las 3 variantes de texto sin emojis en [`descripciones_vigentes/`](descripciones_vigentes/).
 5. Mantiene los paquetes de [`propiedades/`](propiedades/) y sus `ficha_publicacion.json`.
 
-> Este comando es manual. La automatización desatendida vive en la VM (ver sección 4).
+> Este comando es manual y **debe correr en la Mac**, porque usa la sesión local de Chrome. La automatización desatendida vive en la VM (ver sección 4).
+
+Para una propiedad nueva, el sincronizador no inventa textos: agrega su entrada al catálogo curado `CATALOGO_PROPIEDADES` de `organizador_propiedades_autonomo.py` y ejecuta:
+
+```bash
+python3 organizador_propiedades_autonomo.py
+python3 procesar_fotos.py --datos
+```
 
 ---
 
@@ -100,7 +111,48 @@ ssh root@138.197.15.61
 
 ---
 
-## 5. Dónde consultar la información
+## 5. Agentes y modelos gratuitos (sin costo adicional)
+
+Los 10 roles viven en `.opencode/agents/` y su especificación en `agents/roles.json`. La cadena de modelos está en `agents/modelos_gratuitos.json`; **todos los modelos de esa cadena tienen costo 0**.
+
+| Rol | Modelo inicial |
+| :--- | :--- |
+| Coordinador | `opencode/big-pickle` |
+| Repo Init | `opencode/glm-5.3-flash-free` |
+| Autopush Builder | `opencode/deepseek-v4.1-flash-free` |
+| Data Collector | `opencode/minimax-m3.1-flash-free` |
+| Content Gen 1 | `opencode/longcat-2.5-free` |
+| Content Gen 2 | `opencode/flint-40b-free` |
+| Content Gen 3 | `opencode/mimo-v2.6-flash-free` |
+| Scheduler Validator | `opencode/inkling-2-small-free` |
+| Alert Bot | `opencode/beam-free` |
+| Verificador de Agentes | `opencode/nemotron-3.5-super-vl-free` |
+
+### Si se agota la cuota de un modelo
+
+```bash
+python3 agents/cambiar_modelo.py --siguiente --motivo "cuota agotada"
+```
+
+Eso pasa el modelo por defecto y cada agente al siguiente modelo gratuito de la cadena. También se puede cambiar un solo agente:
+
+```bash
+python3 agents/cambiar_modelo.py --rol content-gen-1 --siguiente
+```
+
+El script rechaza cualquier modelo que no esté en la cadena gratuita, así que no puede terminar usando un modelo de pago.
+
+### Verificar que todos los agentes operen
+
+```bash
+python3 agents/verificar_agentes.py
+```
+
+Revisa definición, modelo gratuito, archivos requeridos, estado, antigüedad, sintaxis de scripts y coherencia de las 12 listas con las 8 fichas. Escribe `status/agentes.json` y devuelve código 1 si hay errores.
+
+---
+
+## 6. Dónde consultar la información
 
 | Para ver... | Abre este archivo |
 | :--- | :--- |
@@ -111,10 +163,12 @@ ssh root@138.197.15.61
 | **Estado y clics de Marketplace** | [`relacion_propiedades_marketplace.md`](relacion_propiedades_marketplace.md) |
 | **Las 12 listas de grupos** | [`clasificacion_grupos_facebook.md`](clasificacion_grupos_facebook.md) |
 | **Reglas del agente de publicación** | [`sistema_agendamiento_propiedades.md`](sistema_agendamiento_propiedades.md) |
+| **Roles, modelos y fallback** | [`agents/roles.json`](agents/roles.json) y [`agents/modelos_gratuitos.json`](agents/modelos_gratuitos.json) |
+| **Número de WhatsApp** | [`config_publicacion.json`](config_publicacion.json) |
 
 ---
 
-## 6. Repositorio GitHub
+## 7. Repositorio GitHub
 
 - **URL:** [https://github.com/pereba911/MGP-Prospeccion](https://github.com/pereba911/MGP-Prospeccion)
 - **Rama:** `main`
@@ -123,7 +177,16 @@ ssh root@138.197.15.61
 
 ---
 
-## 7. Problemas comunes
+## 8. Problemas comunes
+
+**“Se agotó la cuota del modelo”**
+Ejecuta `python3 agents/cambiar_modelo.py --siguiente --motivo "cuota agotada"`. Todos los modelos de la cadena son gratuitos; no hay costo adicional.
+
+**“Hay fallos en agentes o modelos locales”**
+Ejecuta `python3 agents/verificar_agentes.py` y corrige lo que marque en rojo. El detalle queda en `status/agentes.json`.
+
+**“Falta el número de WhatsApp”**
+Escribe el número internacional (sin `+` ni espacios) en `whatsapp_numero` dentro de `config_publicacion.json`, por ejemplo `523312345678`. Después ejecuta `python3 organizador_propiedades_autonomo.py` para regenerar las fichas.
 
 **“GitHub está bloqueando el push” (GH013)**
 El historial contiene un token. Se limpió el 2026-11-13; si vuelve a pasar, revisa que `.env` esté ignorado y que ningún script escriba el token en texto plano.
