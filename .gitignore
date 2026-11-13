@@ -6,6 +6,7 @@ status/
 autopush.log
 alert_bot.log
 alertas.log
+dashboard_server.log
 .alert_state
 fotos_batch/
 portal_data.json
