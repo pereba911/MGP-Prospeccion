@@ -293,7 +293,7 @@ function renderCards(d, active) {
   // Repo / GitHub
   cards.push(card(
     "Repo & GitHub", "repo-init",
-    badge(s.repo_init && s.repo_init.state, "OK"),
+    badge(s.repo_init ? s.repo_init.state : null, "OK"),
     [
       kv("Commit", g.head || "—", true),
       kv("Mensaje", (g.subject || "—").slice(0, 42)),
@@ -450,6 +450,7 @@ async function runAction(action) {
     toast("Error: " + err, "err");
   } finally {
     busy = false;
+    document.querySelectorAll("[data-action]").forEach((b) => (b.disabled = false));
     await load(true);
   }
 }
@@ -480,9 +481,8 @@ $("#btnToken").addEventListener("click", () => {
   $("#tokenInput").value = "";
   $("#tokenDialog").showModal();
 });
-$("#tokenForm").addEventListener("submit", async (ev) => {
-  const value = ev.submitter ? ev.submitter.value : "cancel";
-  if (value !== "save") return;
+$("#tokenForm").addEventListener("submit", (ev) => ev.preventDefault());
+$("#tokenSave").addEventListener("click", async (ev) => {
   ev.preventDefault();
   const token = $("#tokenInput").value.trim();
   if (!token) return;
