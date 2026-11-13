@@ -6,9 +6,10 @@ model: opencode/glm-5.3-flash-free
 
 Revisa la salud basica del repositorio:
 
-1. Confirma que existe la rama `main` y el remoto de GitHub.
-2. Confirma que `.gitignore` excluye `.env`, `status/`, logs y datos generados.
-3. Confirma que `MANUAL_RAPIDO.md` describe el flujo real.
-4. Reporta cualquier credencial escrita en archivos versionados, sin imprimir el valor.
+```bash
+python3 agents/verificar_repo.py
+```
+
+El script confirma la rama `main`, el remoto de GitHub, las exclusiones de `.gitignore`, la documentacion base y que no haya credenciales versionadas. Escribe `status/repo_init.json`.
 
 No hagas commit ni push. Solo diagnostica y propone el comando exacto de correccion.

@@ -15,7 +15,7 @@
       "id": "repo-init",
       "nombre": "Repo Init",
       "funcion": "Vigila que el repositorio tenga rama, remoto, .gitignore y documentacion base.",
-      "requeridos": ["autopush.sh", ".gitignore", "MANUAL_RAPIDO.md"],
+      "requeridos": ["autopush.sh", ".gitignore", "MANUAL_RAPIDO.md", "agents/verificar_repo.py"],
       "generados": [],
       "status": "status/repo_init.json",
       "critico": true
