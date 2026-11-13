@@ -167,6 +167,7 @@
       <button data-action="agentes">Verificar agentes</button>
       <button data-action="modelo">Cambiar modelo (cuota)</button>
       <button data-action="probar_wa">Probar WhatsApp</button>
+      <button id="btnWa">Configurar WhatsApp</button>
       <div class="spacer"></div>
       <button class="ghost" id="btnToken">Configurar token</button>
     </div>
@@ -194,6 +195,18 @@
     <div class="row">
       <button value="cancel" formnovalidate>Cancelar</button>
       <button class="primary" value="save" id="tokenSave">Guardar token</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="waDialog">
+  <form method="dialog" class="body" id="waForm">
+    <h3>API key de CallMeBot</h3>
+    <p>Envía por WhatsApp el texto <code>I allow callmebot to send me messages</code> al <strong>+34 644 51 95 23</strong>. El bot responde con una API key; pégala aquí. Se guarda en el <code>.env</code> de la VM con permisos 600.</p>
+    <input type="password" id="waInput" placeholder="API key" autocomplete="off" spellcheck="false">
+    <div class="row">
+      <button value="cancel" formnovalidate>Cancelar</button>
+      <button class="primary" value="save" id="waSave">Guardar API key</button>
     </div>
   </form>
 </dialog>
@@ -524,6 +537,21 @@ $("#tokenSave").addEventListener("click", async (ev) => {
   const r = await post("/api/token", { token });
   toast(r.output || (r.ok ? "Token guardado" : "Error"), r.ok ? "ok" : "err");
   $("#tokenDialog").close();
+  await load(true);
+});
+
+$("#btnWa").addEventListener("click", () => {
+  $("#waInput").value = "";
+  $("#waDialog").showModal();
+});
+$("#waForm").addEventListener("submit", (ev) => ev.preventDefault());
+$("#waSave").addEventListener("click", async (ev) => {
+  ev.preventDefault();
+  const apikey = $("#waInput").value.trim();
+  if (!apikey) return;
+  const r = await post("/api/whatsapp", { apikey });
+  toast(r.output || (r.ok ? "API key guardada" : "Error"), r.ok ? "ok" : "err");
+  $("#waDialog").close();
   await load(true);
 });
 

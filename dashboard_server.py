@@ -270,21 +270,51 @@ def action_run_local(command: str, timeout: int) -> dict:
         return {"ok": False, "output": f"Tiempo agotado ({timeout}s)"}
 
 
+def escribir_env_remoto(clave: str, valor: str) -> dict:
+    """Actualiza una clave de .env sin borrar las demas (token, WhatsApp, etc.)."""
+    script = f'''
+import os, re
+BASE = {REMOTE_DIR!r}
+path = os.path.join(BASE, ".env")
+lineas = []
+if os.path.exists(path):
+    with open(path, encoding="utf-8") as fh:
+        lineas = [l.rstrip("\\n") for l in fh]
+patron = re.compile(r"^{clave}=")
+salida = []
+encontrada = False
+for linea in lineas:
+    if patron.match(linea):
+        salida.append({clave!r} + "=" + {valor!r})
+        encontrada = True
+    else:
+        salida.append(linea)
+if not encontrada:
+    salida.append({clave!r} + "=" + {valor!r})
+with open(path, "w", encoding="utf-8") as fh:
+    fh.write("\\n".join(salida) + "\\n")
+os.chmod(path, 0o600)
+print("Actualizado en .env (600)")
+'''
+    proc = ssh(script, timeout=15)
+    return {"ok": proc.returncode == 0, "output": redact((proc.stdout + proc.stderr).strip())}
+
+
 def action_set_token(token: str) -> dict:
     token = token.strip()
     if not re.fullmatch(r"(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]+)", token):
         return {"ok": False, "output": "Formato de token invalido"}
-    script = f'''
-import os
-BASE = {REMOTE_DIR!r}
-path = os.path.join(BASE, ".env")
-with open(path, "w", encoding="utf-8") as fh:
-    fh.write("GITHUB_TOKEN=%s\\n" % {token!r})
-os.chmod(path, 0o600)
-print("Token actualizado en .env (600)")
-'''
-    proc = ssh(script, timeout=15)
-    return {"ok": proc.returncode == 0, "output": redact((proc.stdout + proc.stderr).strip())}
+    return escribir_env_remoto("GITHUB_TOKEN", token)
+
+
+def action_set_callmebot(apikey: str) -> dict:
+    apikey = apikey.strip()
+    if not re.fullmatch(r"[A-Za-z0-9_-]{4,64}", apikey):
+        return {"ok": False, "output": "Formato de API key invalido"}
+    resultado = escribir_env_remoto("CALLMEBOT_APIKEY", apikey)
+    if resultado["ok"]:
+        escribir_env_remoto("WHATSAPP_PROVIDER", "callmebot")
+    return resultado
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -361,6 +391,8 @@ class Handler(BaseHTTPRequestHandler):
                 return
         elif parsed.path == "/api/token":
             result = action_set_token(str(payload.get("token", "")))
+        elif parsed.path == "/api/whatsapp":
+            result = action_set_callmebot(str(payload.get("apikey", "")))
         else:
             self._json({"ok": False, "error": "No encontrado"}, 404)
             return
