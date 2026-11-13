@@ -2,9 +2,9 @@
 __pycache__/
 *.pyc
 .env
-.env
 status/
 autopush.log
+alert_bot.log
 alertas.log
 .alert_state
 fotos_batch/

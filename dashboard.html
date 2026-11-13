@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MGP Prospección · Dashboard</title>
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --ok: #0f9d58;
+    --ok-bg: #e6f4ea;
+    --warn: #b45309;
+    --warn-bg: #fef3c7;
+    --err: #b91c1c;
+    --err-bg: #fee2e2;
+    --accent: #1d4ed8;
+    --accent-dark: #1e40af;
+    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 22px 20px 60px; }
+
+  header.top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .brand h1 { font-size: 20px; margin: 0; letter-spacing: -.3px; }
+  .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+  .spacer { flex: 1; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .pill.ok { color: var(--ok); background: var(--ok-bg); }
+  .pill.err { color: var(--err); background: var(--err-bg); }
+  .pill.muted { color: var(--muted); background: #eef1f4; }
+  .meta { color: var(--muted); font-size: 12px; text-align: right; }
+
+  button {
+    font: inherit; cursor: pointer; border: 1px solid var(--line); background: #fff;
+    color: var(--ink); border-radius: 8px; padding: 8px 13px; font-weight: 600;
+    transition: background .15s, border-color .15s, transform .05s;
+  }
+  button:hover { background: #f8fafc; border-color: #cbd5e1; }
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.primary:hover { background: var(--accent-dark); }
+  button.danger { background: #fff; border-color: #fca5a5; color: var(--err); }
+  button.danger:hover { background: var(--err-bg); }
+  button.ghost { border-color: transparent; background: transparent; color: var(--muted); }
+  button.ghost:hover { background: #eef1f4; color: var(--ink); }
+
+  .banner { border-radius: 10px; padding: 11px 14px; margin-bottom: 10px; font-size: 13px; border: 1px solid; }
+  .banner.err { background: var(--err-bg); border-color: #fecaca; color: #7f1d1d; }
+  .banner.warn { background: var(--warn-bg); border-color: #fde68a; color: #78350f; }
+  .banner.ok { background: var(--ok-bg); border-color: #bbf7d0; color: #14532d; }
+  .banner strong { font-weight: 700; }
+
+  .panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 18px; margin-bottom: 16px;
+  }
+  .automation { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .automation .state { display: flex; align-items: center; gap: 12px; }
+  .big-dot { width: 14px; height: 14px; border-radius: 50%; background: #9ca3af; box-shadow: 0 0 0 5px #eef1f4; }
+  .big-dot.on { background: var(--ok); box-shadow: 0 0 0 5px var(--ok-bg); }
+  .automation h2 { margin: 0; font-size: 16px; }
+  .automation .sub { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 15px; display: flex; flex-direction: column; gap: 9px; }
+  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .card h3 { margin: 0; font-size: 13.5px; letter-spacing: .1px; }
+  .card .role { color: var(--muted); font-size: 11.5px; margin-top: 1px; }
+  .badge { padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .badge.ok { color: var(--ok); background: var(--ok-bg); }
+  .badge.err { color: var(--err); background: var(--err-bg); }
+  .badge.warn { color: var(--warn); background: var(--warn-bg); }
+  .badge.muted { color: var(--muted); background: #eef1f4; }
+  .kv { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; }
+  .kv span:first-child { color: var(--muted); }
+  .kv span:last-child { text-align: right; font-weight: 600; word-break: break-word; }
+  .kv .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 500; font-size: 11.5px; }
+  .bar { height: 6px; border-radius: 99px; background: #eef1f4; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--ok); width: 0%; transition: width .4s ease; }
+  .card .actions { margin-top: auto; padding-top: 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .card .actions button { padding: 6px 10px; font-size: 12px; }
+
+  .toolbar { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+  .toolbar h2 { margin: 0 8px 0 0; font-size: 15px; }
+
+  .logs { margin-top: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .tabs button { padding: 6px 12px; font-size: 12px; }
+  .tabs button.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+  pre.log {
+    margin: 0; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.8px;
+    line-height: 1.55; max-height: 340px; overflow: auto; white-space: pre-wrap; word-break: break-word;
+  }
+  .empty { color: var(--muted); font-style: italic; font-size: 12.5px; }
+
+  .toast-wrap { position: fixed; right: 18px; bottom: 18px; display: flex; flex-direction: column; gap: 8px; z-index: 50; }
+  .toast { background: #111827; color: #fff; padding: 10px 14px; border-radius: 9px; font-size: 12.5px; box-shadow: 0 8px 24px rgba(0,0,0,.2); max-width: 380px; }
+  .toast.err { background: var(--err); }
+  .toast.ok { background: var(--ok); }
+
+  dialog { border: none; border-radius: 14px; padding: 0; width: min(430px, 92vw); box-shadow: 0 24px 60px rgba(0,0,0,.25); }
+  dialog::backdrop { background: rgba(15,23,42,.45); }
+  dialog .body { padding: 20px; }
+  dialog h3 { margin: 0 0 6px; font-size: 16px; }
+  dialog p { margin: 0 0 14px; color: var(--muted); font-size: 12.5px; }
+  dialog input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; margin-bottom: 14px; }
+  dialog .row { display: flex; justify-content: flex-end; gap: 8px; }
+  .fine { color: var(--muted); font-size: 11.5px; margin-top: 14px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>MGP Prospección · Dashboard</h1>
+      <p>Control local de la automatización en <span id="host" class="mono">root@138.197.15.61</span></p>
+    </div>
+    <div class="spacer"></div>
+    <div class="meta">
+      <div id="connPill" class="pill muted"><span class="dot"></span><span id="connText">Conectando…</span></div>
+      <div style="margin-top:6px">Actualizado: <span id="updated">—</span></div>
+    </div>
+    <button class="ghost" id="refreshBtn" title="Actualizar ahora">↻ Actualizar</button>
+  </header>
+
+  <div id="banners"></div>
+
+  <section class="panel automation">
+    <div class="state">
+      <div class="big-dot" id="autoDot"></div>
+      <div>
+        <h2 id="autoTitle">Automatización</h2>
+        <div class="sub" id="autoSub">Comprobando estado del cron…</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="toolbar">
+      <button class="primary" id="btnOn">Encender automatización</button>
+      <button class="danger" id="btnOff">Detener</button>
+    </div>
+  </section>
+
+  <div class="grid" id="cards"></div>
+
+  <section class="panel" style="margin-top:16px">
+    <div class="toolbar">
+      <h2>Acciones</h2>
+      <button data-action="autopush">Ejecutar autopush ahora</button>
+      <button data-action="sync">Actualizar inventario</button>
+      <button data-action="fotos">Regenerar datos y fotos</button>
+      <button data-action="validar">Validar scripts y cron</button>
+      <div class="spacer"></div>
+      <button class="ghost" id="btnToken">Configurar token</button>
+    </div>
+  </section>
+
+  <section class="logs">
+    <div class="tabs" id="tabs">
+      <button data-log="autopush" class="active">Log autopush</button>
+      <button data-log="alertas">Alertas</button>
+      <button data-log="activity">Actividad</button>
+    </div>
+    <pre class="log" id="logBox">Cargando…</pre>
+  </section>
+
+  <div class="fine">Servidor local en 127.0.0.1 · los datos viajan por SSH y el token nunca se muestra</div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<dialog id="tokenDialog">
+  <form method="dialog" class="body" id="tokenForm">
+    <h3>Actualizar token de GitHub</h3>
+    <p>Se guarda en <code>.env</code> con permisos 600 en la VM. El token actual debe rotarse si estuvo expuesto.</p>
+    <input type="password" id="tokenInput" placeholder="ghp_…" autocomplete="off" spellcheck="false">
+    <div class="row">
+      <button value="cancel" formnovalidate>Cancelar</button>
+      <button class="primary" value="save" id="tokenSave">Guardar token</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const $ = (s) => document.querySelector(s);
+let lastStatus = null;
+let activeLog = "autopush";
+let activity = [];
+let busy = false;
+
+const nf = new Intl.NumberFormat("es-MX");
+
+function esc(v) {
+  return String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function toast(msg, kind = "") {
+  const el = document.createElement("div");
+  el.className = "toast " + kind;
+  el.textContent = msg;
+  $("#toasts").appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+
+function badge(state, fallback = "Sin datos") {
+  if (state == null || state === "") return `<span class="badge muted">${fallback}</span>`;
+  const s = String(state).toUpperCase();
+  if (s.includes("DONE") || s === "OK" || s === "TRUE") return `<span class="badge ok">OK</span>`;
+  if (s.includes("ERROR") || s === "FALSE") return `<span class="badge err">Error</span>`;
+  return `<span class="badge warn">${esc(state)}</span>`;
+}
+
+function kv(label, value, mono = false) {
+  return `<div class="kv"><span>${esc(label)}</span><span class="${mono ? "mono" : ""}">${esc(value)}</span></div>`;
+}
+
+function card(title, role, badgeHtml, rows, extra = "") {
+  return `<div class="card">
+    <div class="card-head"><div><h3>${esc(title)}</h3><div class="role">${esc(role)}</div></div>${badgeHtml}</div>
+    ${rows.join("")}${extra}
+  </div>`;
+}
+
+function render(data) {
+  lastStatus = data;
+  const ok = !!data.ok;
+  $("#connPill").className = "pill " + (ok ? "ok" : "err");
+  $("#connText").textContent = ok ? "Conectado a la VM" : "Sin conexión";
+  $("#updated").textContent = data.checked_at || "—";
+  if (ok && data.host) $("#host").textContent = `root@${data.host}`;
+
+  const cron = (data.cron || {});
+  const active = !!(cron.autopush && cron.alert_bot);
+  $("#autoDot").className = "big-dot" + (active ? " on" : "");
+  $("#autoTitle").textContent = active ? "Automatización activa" : "Automatización detenida";
+  $("#autoSub").textContent = active
+    ? "Cron de autopush (lunes 10:00) y alertas (cada 5 min) instalado."
+    : "Los procesos no se ejecutarán solos. Enciéndela cuando estés listo.";
+  $("#btnOn").disabled = busy || !ok || active;
+  $("#btnOff").disabled = busy || !ok || !active;
+
+  renderBanners(data, active);
+  renderCards(data, active);
+  renderLog(data);
+}
+
+function renderBanners(d, active) {
+  const out = [];
+  const g = d.git || {};
+  if (!d.ok) {
+    out.push(`<div class="banner err"><strong>Sin conexión con la VM.</strong> ${esc(d.error || "")}<br>Verifica que <code>ssh ${esc("root@138.197.15.61")}</code> funcione sin contraseña.</div>`);
+  } else {
+    if (d.last_error && /GH013|rejected|secret/i.test(d.last_error)) {
+      out.push(`<div class="banner err"><strong>GitHub está bloqueando el push.</strong> ${esc(d.last_error)}</div>`);
+    } else if (g.ahead > 0 && active) {
+      out.push(`<div class="banner warn"><strong>Hay ${g.ahead} commit(s) sin subir.</strong> El autopush intentará subirlos en la próxima ejecución.</div>`);
+    }
+    if (d.token_env_file === false) {
+      out.push(`<div class="banner err"><strong>Falta el token en <code>.env</code>.</strong> Usa “Configurar token” para guardarlo.</div>`);
+    }
+    if (d.cron && d.cron.token_in_cron) {
+      out.push(`<div class="banner warn"><strong>El token sigue escrito en el crontab.</strong> Muévelo a <code>.env</code> y rótalo.</div>`);
+    }
+    if (d.chrome === false) {
+      out.push(`<div class="banner warn"><strong>Chrome / MultiGroup Poster no está corriendo</strong> en la VM, así que la publicación no puede operar.</div>`);
+    }
+    if (active && !d.last_error && !(g.ahead > 0)) {
+      out.push(`<div class="banner ok"><strong>Todo en orden.</strong> La automatización está activa y no hay errores pendientes en el log.</div>`);
+    }
+  }
+  $("#banners").innerHTML = out.join("");
+}
+
+function renderCards(d, active) {
+  const s = d.statuses || {};
+  const g = d.git || {};
+  const cards = [];
+
+  // Repo / GitHub
+  cards.push(card(
+    "Repo & GitHub", "repo-init",
+    badge(s.repo_init && s.repo_init.state, "OK"),
+    [
+      kv("Commit", g.head || "—", true),
+      kv("Mensaje", (g.subject || "—").slice(0, 42)),
+      kv("Sin subir", g.ahead == null ? "—" : g.ahead),
+      kv("Sin bajar", g.behind == null ? "—" : g.behind),
+      kv("Cambios locales", g.dirty ? "Sí" : "No"),
+    ],
+    `<div class="actions"><button data-action="autopush">Probar push</button></div>`
+  ));
+
+  // Autopush
+  cards.push(card(
+    "Autopush", "autopush-builder · lunes 10:00",
+    active ? `<span class="badge ok">Programado</span>` : `<span class="badge muted">Detenido</span>`,
+    [
+      kv("Cron", (d.cron || {}).autopush ? "Instalado" : "No instalado"),
+      kv("Token en .env", d.token_env_file ? "Sí" : "No"),
+      kv("Último error", d.last_error ? "Sí" : "No"),
+    ],
+    `<div class="actions"><button data-action="autopush" ${active ? "" : "disabled"}>Ejecutar ahora</button></div>`
+  ));
+
+  // Alert bot
+  cards.push(card(
+    "Alert-Bot", "alert_bot · cada 5 min",
+    badge(s.alert_bot && s.alert_bot.state, "Sin datos"),
+    [
+      kv("Cron", (d.cron || {}).alert_bot ? "Instalado" : "No instalado"),
+      kv("Alertas", (d.logs && d.logs.alertas) ? "Con registros" : "Ninguna"),
+      kv("Correo", "Config. pendiente"),
+    ]
+  ));
+
+  // Data collector
+  cards.push(card(
+    "Data-Collector", "inventario y batches",
+    badge(s.data_collector && s.data_collector.state, "Sin datos"),
+    [
+      kv("Propiedades", s.data_collector ? s.data_collector.propiedades : "—"),
+      kv("Fotos", s.data_collector ? s.data_collector.fotos : nf.format(d.fotos_total || 0)),
+      kv("portal_data.json", d.portal_data ? "Generado" : "Falta"),
+    ]
+  ));
+
+  // Content generators
+  for (let n = 1; n <= 3; n++) {
+    const cg = s["content_gen_" + n];
+    const total = cg ? (cg.total || 0) : (d.batches ? d.batches[n - 1] : 0);
+    const proc = cg ? (cg.procesadas || 0) : 0;
+    const pct = total ? Math.min(100, Math.round((proc / total) * 100)) : 0;
+    cards.push(card(
+      `Fotos · batch ${n}`, `content-gen-${n} · iluminación`,
+      badge(cg && cg.state, "Sin datos"),
+      [
+        kv("Procesadas", `${nf.format(proc)} / ${nf.format(total)}`),
+        kv("Errores", cg ? (cg.errores || 0) : "—"),
+      ],
+      `<div class="bar"><i style="width:${pct}%"></i></div>`
+    ));
+  }
+
+  // Scheduler validator
+  const svOk = (d.cron || {}).autopush && (d.cron || {}).alert_bot && !d.last_error;
+  cards.push(card(
+    "Scheduler-Validator", "cron y push",
+    badge(s.scheduler_validator ? s.scheduler_validator.state : (svOk ? "OK" : null), "Sin datos"),
+    [
+      kv("Cron activo", active ? "Sí" : "No"),
+      kv("Push OK", d.last_error ? "No" : (g.ahead === 0 ? "Sí" : "Pendiente")),
+      kv("Fotos", `${nf.format(d.fotos_procesadas || 0)} procesadas`),
+    ],
+    `<div class="actions"><button data-action="validar">Validar</button></div>`
+  ));
+
+  // Chrome
+  cards.push(card(
+    "Chrome / MultiGroup", "navegador de la VM",
+    d.chrome ? `<span class="badge ok">Activo</span>` : `<span class="badge err">Detenido</span>`,
+    [
+      kv("Ventana", d.chrome ? "Facebook abierto" : "No detectada"),
+      kv("Disco", (d.disk || "—").replace(/\s+/g, " ")),
+      kv("Uptime", d.uptime || "—"),
+    ]
+  ));
+
+  $("#cards").innerHTML = cards.join("");
+}
+
+function renderLog(d) {
+  let text = "";
+  if (activeLog === "activity") {
+    text = activity.length ? activity.join("\n\n") : "Sin actividad en esta sesión.";
+  } else if (!d.ok) {
+    text = "Sin conexión: no se pudo leer el log.\n" + (d.error || "");
+  } else {
+    text = (d.logs && d.logs[activeLog]) || "";
+    if (!text.trim()) text = "(log vacío)";
+  }
+  $("#logBox").textContent = text;
+  $("#logBox").scrollTop = 0;
+}
+
+async function load(force = false) {
+  try {
+    const res = await fetch("/api/status" + (force ? "?refresh=1" : ""), { cache: "no-store" });
+    render(await res.json());
+  } catch (err) {
+    render({ ok: false, error: String(err), checked_at: "—" });
+  }
+}
+
+async function post(url, payload) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload || {}),
+  });
+  return res.json();
+}
+
+async function setAutomation(enable) {
+  if (!enable && !confirm("¿Detener la automatización? Se quitarán las tareas de cron.")) return;
+  busy = true;
+  $("#btnOn").disabled = $("#btnOff").disabled = true;
+  try {
+    const r = await post("/api/automation", { enable });
+    toast(r.output || (r.ok ? "Hecho" : "Error"), r.ok ? "ok" : "err");
+    activity.unshift(`[${new Date().toLocaleTimeString("es-MX")}] ${enable ? "ENCENDER" : "DETENER"} automatización\n${r.output || ""}`);
+  } catch (err) {
+    toast("Error: " + err, "err");
+  } finally {
+    busy = false;
+    await load(true);
+  }
+}
+
+async function runAction(action) {
+  const names = {
+    autopush: "Ejecutando autopush…",
+    sync: "Actualizando inventario de Marketplace…",
+    fotos: "Regenerando datos y fotos…",
+    validar: "Validando scripts y cron…",
+  };
+  busy = true;
+  document.querySelectorAll("[data-action]").forEach((b) => (b.disabled = true));
+  toast(names[action] || "Ejecutando…");
+  try {
+    const r = await post("/api/run", { action });
+    toast(r.ok ? "Completado" : "Terminó con errores", r.ok ? "ok" : "err");
+    activity.unshift(`[${new Date().toLocaleTimeString("es-MX")}] ${action.toUpperCase()} (${r.ok ? "OK" : "ERROR"})\n${r.output || ""}`);
+    activeLog = "activity";
+    syncTabs();
+  } catch (err) {
+    toast("Error: " + err, "err");
+  } finally {
+    busy = false;
+    await load(true);
+  }
+}
+
+function syncTabs() {
+  document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("active", b.dataset.log === activeLog));
+}
+
+$("#tabs").addEventListener("click", (ev) => {
+  const b = ev.target.closest("button[data-log]");
+  if (!b) return;
+  activeLog = b.dataset.log;
+  syncTabs();
+  if (lastStatus) renderLog(lastStatus);
+});
+
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-action]");
+  if (!b) return;
+  runAction(b.dataset.action);
+});
+
+$("#btnOn").addEventListener("click", () => setAutomation(true));
+$("#btnOff").addEventListener("click", () => setAutomation(false));
+$("#refreshBtn").addEventListener("click", () => load(true));
+
+$("#btnToken").addEventListener("click", () => {
+  $("#tokenInput").value = "";
+  $("#tokenDialog").showModal();
+});
+$("#tokenForm").addEventListener("submit", async (ev) => {
+  const value = ev.submitter ? ev.submitter.value : "cancel";
+  if (value !== "save") return;
+  ev.preventDefault();
+  const token = $("#tokenInput").value.trim();
+  if (!token) return;
+  const r = await post("/api/token", { token });
+  toast(r.output || (r.ok ? "Token guardado" : "Error"), r.ok ? "ok" : "err");
+  $("#tokenDialog").close();
+  await load(true);
+});
+
+setInterval(() => { if (!document.hidden) load(); }, 8000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) load(true); });
+load(true);
+</script>
+</body>
+</html>
