@@ -141,7 +141,17 @@ def ejecutar_json_local(args: list[str], timeout: int = 45) -> dict:
         text=True,
         timeout=timeout,
     )
-    return json.loads(proc.stdout.strip().splitlines()[-1])
+    salida = proc.stdout.strip()
+    if not salida:
+        raise RuntimeError(redact(proc.stderr.strip()) or f"{args[0]} no devolvio salida")
+    try:
+        return json.loads(salida)
+    except json.JSONDecodeError:
+        # Algunos scripts imprimen avisos antes del JSON: toma desde la primera llave.
+        inicio = salida.find("{")
+        if inicio == -1:
+            raise
+        return json.loads(salida[inicio:])
 
 
 def get_status(force: bool = False) -> dict:
