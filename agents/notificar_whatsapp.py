@@ -96,7 +96,7 @@ def enviar_callmebot(cfg: dict, texto: str) -> tuple[bool, str]:
         cuerpo = resp.read().decode("utf-8", errors="replace")
     bajo = cuerpo.lower()
     ok = resp.status == 200 and not any(
-        x in bajo for x in ("error", "invalid", "not allowed", "apikey")
+        x in bajo for x in ("error", "invalid", "not allowed", "not registered")
     )
     return ok, "enviado" if ok else "respuesta no valida de CallMeBot"
 
