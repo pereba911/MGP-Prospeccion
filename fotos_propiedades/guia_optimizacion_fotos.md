@@ -1,14 +1,28 @@
 # Guía de Optimización y Carga de Fotografías para MultiGroup Poster
 
-## 1. Estructura de Carpetas Creada en tu Mac
+## 1. Estructura de Carpetas
 
-Se ha creado la estructura dentro de este proyecto:
-[`fotos_propiedades/`](fotos_propiedades/)
+Las fotos de cada propiedad viven dentro de su paquete, no en una carpeta aparte. Esta guía aplica a:
 
-* `01_colinas_san_javier_venta/` -> Fotos de la residencia en Colinas ($13.8M)
-* `02_country_club_128m2_venta/` -> Fotos del depto en Country Club ($10.5M)
-* `03_zapopan_venta/` -> Fotos del depto en Zapopan ($1.99M)
-* `04_elysian_country_renta/` -> Fotos del depto amueblado resort ($44.9K)
+```
+propiedades/<id_propiedad>/fotografias/            Originales
+propiedades/<id_propiedad>/fotografias_procesadas/ Salida de procesar_fotos.py
+```
+
+Propiedades activas (8):
+
+| Carpeta | Operación |
+| :--- | :--- |
+| `01_colinas_san_javier_casa_venta` | Venta |
+| `02_country_club_depto_venta` | Venta |
+| `03_elysian_country_amueblado_renta` | Renta |
+| `04_country_club_200m2_renta` | Renta |
+| `05_torre_opera_depto_renta` | Renta |
+| `06_hyatt_regency_andares_renta` | Renta |
+| `07_torre_hsbc_oficinas_renta` | Renta |
+| `08_americana_estudio_amueblado_renta` | Renta |
+
+> Los originales nunca se modifican. El procesamiento genera copias en `fotografias_procesadas/`, que está excluida de git.
 
 ---
 
@@ -44,7 +58,7 @@ Facebook crea un mosaico visual con las primeras 4 fotos. Nombra tus fotos numé
 ## 4. Métodos para Importar a MultiGroup Poster
 
 ### Método A: Manual Rápido (Arrastrar y Soltar)
-1. Abre tu carpeta en Finder: `/Users/mac/Documents/MGP Prospeccion/fotos_propiedades/[propiedad]/`.
+1. Abre en Finder `propiedades/[propiedad]/fotografias_procesadas/` (o `fotografias/` si aún no procesaste).
 2. En la pestaña de **MultiGroup Poster** en Chrome, ve al creador de posts.
 3. Selecciona las fotos del Finder y arrástralas directamente al recuadro de fotos.
 4. Pega la descripción de la propiedad tomada de [`descripciones_vigentes/`](../descripciones_vigentes/).
