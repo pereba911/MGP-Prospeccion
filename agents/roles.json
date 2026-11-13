@@ -1,0 +1,96 @@
+{
+  "actualizado": "2026-11-13",
+  "descripcion": "Especificacion operativa de cada rol. La usa agents/verificar_agentes.py para comprobar que todos los agentes existen, tienen modelo gratuito y sus automatizaciones estan completas.",
+  "roles": [
+    {
+      "id": "coordinator",
+      "nombre": "Coordinador",
+      "funcion": "Orquesta a los demas agentes y decide el siguiente paso del pipeline.",
+      "requeridos": ["agents/roles.json", "agents/modelos_gratuitos.json", "MANUAL_RAPIDO.md"],
+      "generados": [],
+      "status": null,
+      "critico": true
+    },
+    {
+      "id": "repo-init",
+      "nombre": "Repo Init",
+      "funcion": "Vigila que el repositorio tenga rama, remoto, .gitignore y documentacion base.",
+      "requeridos": ["autopush.sh", ".gitignore", "MANUAL_RAPIDO.md"],
+      "generados": [],
+      "status": "status/repo_init.json",
+      "critico": true
+    },
+    {
+      "id": "autopush-builder",
+      "nombre": "Autopush Builder",
+      "funcion": "Sincroniza el repositorio con GitHub usando el token de .env.",
+      "requeridos": ["autopush.sh"],
+      "generados": [],
+      "status": "status/scheduler_validator.json",
+      "critico": true
+    },
+    {
+      "id": "data-collector",
+      "nombre": "Data Collector",
+      "funcion": "Construye portal_data.json y reparte las fotos en tres lotes equilibrados.",
+      "requeridos": ["procesar_fotos.py"],
+      "generados": ["portal_data.json", "fotos_batch/batch-1/lista.txt"],
+      "status": "status/data_collector.json",
+      "critico": true
+    },
+    {
+      "id": "content-gen-1",
+      "nombre": "Content Gen 1",
+      "funcion": "Procesa la iluminacion del lote 1 de fotografias.",
+      "requeridos": ["procesar_fotos.py"],
+      "generados": ["fotos_batch/batch-1/lista.txt"],
+      "status": "status/content_gen_1.json",
+      "critico": true
+    },
+    {
+      "id": "content-gen-2",
+      "nombre": "Content Gen 2",
+      "funcion": "Procesa la iluminacion del lote 2 de fotografias.",
+      "requeridos": ["procesar_fotos.py"],
+      "generados": ["fotos_batch/batch-2/lista.txt"],
+      "status": "status/content_gen_2.json",
+      "critico": true
+    },
+    {
+      "id": "content-gen-3",
+      "nombre": "Content Gen 3",
+      "funcion": "Procesa la iluminacion del lote 3 de fotografias.",
+      "requeridos": ["procesar_fotos.py"],
+      "generados": ["fotos_batch/batch-3/lista.txt"],
+      "status": "status/content_gen_3.json",
+      "critico": true
+    },
+    {
+      "id": "scheduler-validator",
+      "nombre": "Scheduler Validator",
+      "funcion": "Comprueba cron, scripts y resultado del ultimo push.",
+      "requeridos": ["autopush.sh", "alert_bot.sh"],
+      "generados": [],
+      "status": "status/scheduler_validator.json",
+      "critico": true
+    },
+    {
+      "id": "alert-bot",
+      "nombre": "Alert Bot",
+      "funcion": "Revisa lineas nuevas del log y registra alertas de error.",
+      "requeridos": ["alert_bot.sh"],
+      "generados": [],
+      "status": "status/alert_bot.json",
+      "critico": true
+    },
+    {
+      "id": "verificador-agentes",
+      "nombre": "Verificador de Agentes",
+      "funcion": "Ejecuta la revision de salud de todos los roles y escribe status/agentes.json.",
+      "requeridos": ["agents/verificar_agentes.py", "agents/roles.json", "agents/modelos_gratuitos.json"],
+      "generados": ["status/agentes.json"],
+      "status": "status/agentes.json",
+      "critico": true
+    }
+  ]
+}

@@ -164,6 +164,8 @@
       <button data-action="sync">Actualizar inventario</button>
       <button data-action="fotos">Regenerar datos y fotos</button>
       <button data-action="validar">Validar scripts y cron</button>
+      <button data-action="agentes">Verificar agentes</button>
+      <button data-action="modelo">Cambiar modelo (cuota)</button>
       <div class="spacer"></div>
       <button class="ghost" id="btnToken">Configurar token</button>
     </div>
@@ -278,6 +280,14 @@ function renderBanners(d, active) {
     if (d.chrome === false) {
       out.push(`<div class="banner warn"><strong>Chrome / MultiGroup Poster no está corriendo</strong> en la VM, así que la publicación no puede operar.</div>`);
     }
+    const loc = d.local || {};
+    if (loc.error) {
+      out.push(`<div class="banner warn"><strong>No se pudieron revisar los agentes locales.</strong> ${esc(loc.error)}</div>`);
+    } else if (loc.agentes && !loc.agentes.ok) {
+      out.push(`<div class="banner err"><strong>Hay fallos en agentes o modelos locales.</strong> ${esc((loc.agentes.errores || [])[0] || "")}</div>`);
+    } else if (loc.agentes && loc.agentes.publicacion && !loc.agentes.publicacion.whatsapp_configurado) {
+      out.push(`<div class="banner warn"><strong>Falta el número de WhatsApp.</strong> Configúralo en <code>config_publicacion.json</code> para que los comentarios de las fichas sean válidos.</div>`);
+    }
     if (active && !d.last_error && !(g.ahead > 0)) {
       out.push(`<div class="banner ok"><strong>Todo en orden.</strong> La automatización está activa y no hay errores pendientes en el log.</div>`);
     }
@@ -368,6 +378,23 @@ function renderCards(d, active) {
     `<div class="actions"><button data-action="validar">Validar</button></div>`
   ));
 
+  // Agentes y modelos locales (Mac)
+  const loc = d.local || {};
+  const ag = loc.agentes;
+  const mo = loc.modelos;
+  const whatsappOk = ag && ag.publicacion ? ag.publicacion.whatsapp_configurado : false;
+  cards.push(card(
+    "Agentes y modelos", "local · Mac",
+    badge(ag ? (ag.ok ? "DONE" : "ERROR") : null, "Sin datos"),
+    [
+      kv("Roles OK", ag ? `${ag.roles_ok}/${ag.roles_total}` : "—"),
+      kv("Modelo", mo ? mo.default : "—", true),
+      kv("Costo", mo ? (mo.todo_gratuito ? "0 (gratuito)" : "Revisar") : "—"),
+      kv("WhatsApp", whatsappOk ? "Configurado" : "Pendiente"),
+    ],
+    `<div class="actions"><button data-action="agentes">Verificar</button><button data-action="modelo">Cambiar modelo</button></div>`
+  ));
+
   // Chrome
   cards.push(card(
     "Chrome / MultiGroup", "navegador de la VM",
@@ -436,6 +463,8 @@ async function runAction(action) {
     sync: "Actualizando inventario de Marketplace…",
     fotos: "Regenerando datos y fotos…",
     validar: "Validando scripts y cron…",
+    agentes: "Verificando agentes y modelos…",
+    modelo: "Cambiando a otro modelo gratuito…",
   };
   busy = true;
   document.querySelectorAll("[data-action]").forEach((b) => (b.disabled = true));

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+# Sincroniza el repositorio con GitHub. El token vive en .env (600).
 set -uo pipefail
-cd /home/poster/mgp-prospeccion
+cd "$(dirname "$0")"
 if [ -f .env ]; then set -a; . ./.env; set +a; fi
 : "${GITHUB_TOKEN:?GITHUB_TOKEN no configurado en .env}"
 HELPER='!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f'

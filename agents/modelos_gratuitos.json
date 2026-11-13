@@ -1,0 +1,30 @@
+{
+  "actualizado": "2026-11-13",
+  "proveedor": "opencode",
+  "nota": "Todos los modelos de esta cadena tienen costo 0 (input/output/cache). El orden va del modelo principal al ultimo respaldo. Cambiar de modelo no genera costo adicional.",
+  "orden": [
+    "opencode/big-pickle",
+    "opencode/glm-5.3-flash-free",
+    "opencode/deepseek-v4.1-flash-free",
+    "opencode/minimax-m3.1-flash-free",
+    "opencode/longcat-2.5-free",
+    "opencode/inkling-2-small-free",
+    "opencode/flint-40b-free",
+    "opencode/mimo-v2.6-flash-free",
+    "opencode/beam-free",
+    "opencode/iceman-free",
+    "opencode/nemotron-3.5-super-vl-free"
+  ],
+  "roles": {
+    "coordinator": "opencode/big-pickle",
+    "repo-init": "opencode/glm-5.3-flash-free",
+    "autopush-builder": "opencode/deepseek-v4.1-flash-free",
+    "data-collector": "opencode/minimax-m3.1-flash-free",
+    "content-gen-1": "opencode/longcat-2.5-free",
+    "content-gen-2": "opencode/flint-40b-free",
+    "content-gen-3": "opencode/mimo-v2.6-flash-free",
+    "scheduler-validator": "opencode/inkling-2-small-free",
+    "alert-bot": "opencode/beam-free",
+    "verificador-agentes": "opencode/nemotron-3.5-super-vl-free"
+  }
+}

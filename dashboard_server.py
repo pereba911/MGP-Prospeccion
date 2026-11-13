@@ -13,6 +13,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import threading
 import time
 import webbrowser
@@ -100,6 +101,12 @@ for n in names:
         st[n] = None
 out["statuses"] = st
 
+try:
+    with open(os.path.join(BASE, "status", "agentes.json"), encoding="utf-8") as fh:
+        out["agentes_vm"] = json.load(fh)
+except Exception:
+    out["agentes_vm"] = None
+
 out["portal_data"] = os.path.isfile("portal_data.json")
 batches = []
 for n in (1, 2, 3):
@@ -126,6 +133,17 @@ print(json.dumps(out, ensure_ascii=False))
 '''
 
 
+def ejecutar_json_local(args: list[str], timeout: int = 45) -> dict:
+    proc = subprocess.run(
+        [sys.executable] + args,
+        cwd=BASE_DIR,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+    )
+    return json.loads(proc.stdout.strip().splitlines()[-1])
+
+
 def get_status(force: bool = False) -> dict:
     with _lock:
         if not force and _cache["data"] and (time.time() - _cache["ts"]) < CACHE_TTL:
@@ -139,6 +157,15 @@ def get_status(force: bool = False) -> dict:
         data["checked_at"] = time.strftime("%H:%M:%S")
     except Exception as exc:  # noqa: BLE001
         data = {"ok": False, "error": redact(str(exc)), "checked_at": time.strftime("%H:%M:%S")}
+
+    # Estado local de agentes y modelos: corre en la Mac, no en la VM.
+    try:
+        agentes = ejecutar_json_local(["agents/verificar_agentes.py", "--json"])
+        modelos = ejecutar_json_local(["agents/cambiar_modelo.py", "--estado", "--json"])
+        data["local"] = {"agentes": agentes, "modelos": modelos}
+    except Exception as exc:  # noqa: BLE001
+        data["local"] = {"error": redact(str(exc))}
+
     with _lock:
         _cache["ts"] = time.time()
         _cache["data"] = data
@@ -183,6 +210,24 @@ raise SystemExit(p.returncode)
 '''
     try:
         proc = ssh(script, timeout=timeout)
+        return {
+            "ok": proc.returncode == 0,
+            "output": redact((proc.stdout + proc.stderr).strip())[-4000:],
+        }
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "output": f"Tiempo agotado ({timeout}s)"}
+
+
+def action_run_local(command: str, timeout: int) -> dict:
+    try:
+        proc = subprocess.run(
+            command,
+            shell=True,
+            cwd=BASE_DIR,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
         return {
             "ok": proc.returncode == 0,
             "output": redact((proc.stdout + proc.stderr).strip())[-4000:],
@@ -250,9 +295,8 @@ class Handler(BaseHTTPRequestHandler):
             result = action_cron(enable)
         elif parsed.path == "/api/run":
             accion = payload.get("action")
-            comandos = {
+            comandos_vm = {
                 "autopush": ("bash autopush.sh", 90),
-                "sync": ("python3 actualizar_propiedades_marketplace.py", 180),
                 "fotos": ("python3 procesar_fotos.py --todo", 300),
                 "validar": (
                     "bash -n autopush.sh && bash -n alert_bot.sh && "
@@ -262,11 +306,24 @@ class Handler(BaseHTTPRequestHandler):
                     30,
                 ),
             }
-            if accion not in comandos:
+            comandos_local = {
+                "sync": ("python3 actualizar_propiedades_marketplace.py", 240),
+                "agentes": ("python3 agents/verificar_agentes.py", 120),
+                "modelo": (
+                    "python3 agents/cambiar_modelo.py --siguiente "
+                    "--motivo 'cuota agotada desde dashboard'",
+                    60,
+                ),
+            }
+            if accion in comandos_vm:
+                cmd, timeout = comandos_vm[accion]
+                result = action_run(cmd, timeout)
+            elif accion in comandos_local:
+                cmd, timeout = comandos_local[accion]
+                result = action_run_local(cmd, timeout)
+            else:
                 self._json({"ok": False, "output": "Accion desconocida"}, 400)
                 return
-            cmd, timeout = comandos[accion]
-            result = action_run(cmd, timeout)
         elif parsed.path == "/api/token":
             result = action_set_token(str(payload.get("token", "")))
         else:
