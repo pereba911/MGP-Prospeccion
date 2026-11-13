@@ -107,6 +107,30 @@ try:
 except Exception:
     out["agentes_vm"] = None
 
+out["whatsapp"] = None
+try:
+    with open(os.path.join(BASE, "status", "whatsapp.json"), encoding="utf-8") as fh:
+        out["whatsapp"] = json.load(fh)
+except Exception:
+    pass
+
+env = {}
+try:
+    with open(".env", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                env[k.strip()] = v.strip().strip("'\"")
+except Exception:
+    pass
+out["whatsapp_config"] = {
+    "proveedor": env.get("WHATSAPP_PROVIDER") or None,
+    "destino": bool(re.sub(r"\\D", "", env.get("WHATSAPP_ALERTAS", ""))),
+    "callmebot": bool(env.get("CALLMEBOT_APIKEY")),
+    "meta": bool(env.get("META_WA_TOKEN") and env.get("META_WA_PHONE_ID")),
+}
+
 out["portal_data"] = os.path.isfile("portal_data.json")
 batches = []
 for n in (1, 2, 3):
@@ -307,6 +331,7 @@ class Handler(BaseHTTPRequestHandler):
             accion = payload.get("action")
             comandos_vm = {
                 "autopush": ("bash autopush.sh", 90),
+                "probar_wa": ("python3 agents/notificar_whatsapp.py --probar", 60),
                 "fotos": ("python3 procesar_fotos.py --todo", 300),
                 "validar": (
                     "bash -n autopush.sh && bash -n alert_bot.sh && "

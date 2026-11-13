@@ -47,5 +47,5 @@ python3 agents/cambiar_modelo.py --estado
 
 1. **Número de WhatsApp:** escribir el número internacional en `config_publicacion.json` y regenerar fichas.
 2. **Rotación del token de GitHub:** el token anterior estuvo expuesto en logs; debe rotarse desde GitHub y guardarse con el dashboard.
-3. **Correo de alertas:** la VM no tiene `mail` ni SMTP; las alertas quedan en `alertas.log`.
+3. **Alertas por WhatsApp:** implementadas con `agents/notificar_whatsapp.py` (CallMeBot o Meta Cloud API). Falta cargar la API key de CallMeBot o las credenciales de Meta en `.env`.
 4. **Programación automática en MultiGroup Poster:** sigue pendiente la selección de días, hora y confirmación dentro de la extensión.

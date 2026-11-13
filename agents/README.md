@@ -11,6 +11,7 @@ Esta carpeta contiene la especificación y las herramientas de los agentes. Las 
 | `cambiar_modelo.py` | Cambia el modelo por defecto y el de cada agente dentro de la cadena gratuita. |
 | `verificar_agentes.py` | Revisa definiciones, modelos, archivos, estados, sintaxis y coherencia de fichas. |
 | `verificar_repo.py` | Revisa rama, remoto, `.gitignore`, documentación y credenciales versionadas. |
+| `notificar_whatsapp.py` | Envía alertas por WhatsApp con CallMeBot o Meta Cloud API. |
 
 ## Cambiar de modelo cuando se agota la cuota
 

@@ -37,6 +37,7 @@ Se abrirá automáticamente en `http://127.0.0.1:8765`.
 | **Validar scripts y cron** | VM | Revisa sintaxis de los scripts y confirma las entradas de cron. |
 | **Verificar agentes** | Mac | Ejecuta `agents/verificar_agentes.py`. |
 | **Cambiar modelo (cuota)** | Mac | Pasa todos los agentes al siguiente modelo gratuito. |
+| **Probar WhatsApp** | VM | Envía un mensaje de prueba con la configuración de `.env`. |
 | **Configurar token** | VM | Guarda un nuevo token de GitHub en `.env` (permisos 600). |
 
 ### Requisito
@@ -102,6 +103,32 @@ python3 procesar_fotos.py --procesar --batch 2 --force
 - El token se lee de `.env` (permisos `600`), **nunca** del `crontab` ni del código.
 - Al terminar, escribe `status/scheduler_validator.json` con `last_push_ok`.
 - `alert_bot.sh` solo revisa las líneas nuevas del log, así no repite alertas viejas.
+- Cuando detecta un error, guarda la alerta en `alertas.log` y la envía por **WhatsApp**.
+
+### Alertas por WhatsApp
+
+La configuración vive en `.env` (permisos `600`). Hay dos proveedores:
+
+| Proveedor | Ventaja | Requisitos |
+| :--- | :--- | :--- |
+| `callmebot` | Gratuito y rápido | `CALLMEBOT_APIKEY` y `WHATSAPP_ALERTAS` |
+| `meta` | Oficial de WhatsApp | `META_WA_TOKEN`, `META_WA_PHONE_ID` y `WHATSAPP_ALERTAS` |
+
+Para CallMeBot: envía por WhatsApp el texto `I allow callmebot to send me messages` al **+34 644 51 95 23**. El bot responde con una API key; guárdala en `.env`:
+
+```bash
+WHATSAPP_PROVIDER=callmebot
+WHATSAPP_ALERTAS=523340088294
+CALLMEBOT_APIKEY=tu_api_key
+```
+
+Comprueba el envío:
+
+```bash
+python3 agents/notificar_whatsapp.py --probar
+```
+
+Si aún no hay credenciales, el bot no falla: escribe `whatsapp: sin_configurar` en `status/alert_bot.json`.
 
 Para entrar a la VM:
 

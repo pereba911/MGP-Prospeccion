@@ -78,7 +78,7 @@
       "id": "alert-bot",
       "nombre": "Alert Bot",
       "funcion": "Revisa lineas nuevas del log y registra alertas de error.",
-      "requeridos": ["alert_bot.sh"],
+      "requeridos": ["alert_bot.sh", "agents/notificar_whatsapp.py"],
       "generados": [],
       "status": "status/alert_bot.json",
       "critico": true

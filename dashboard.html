@@ -166,6 +166,7 @@
       <button data-action="validar">Validar scripts y cron</button>
       <button data-action="agentes">Verificar agentes</button>
       <button data-action="modelo">Cambiar modelo (cuota)</button>
+      <button data-action="probar_wa">Probar WhatsApp</button>
       <div class="spacer"></div>
       <button class="ghost" id="btnToken">Configurar token</button>
     </div>
@@ -287,6 +288,8 @@ function renderBanners(d, active) {
       out.push(`<div class="banner err"><strong>Hay fallos en agentes o modelos locales.</strong> ${esc((loc.agentes.errores || [])[0] || "")}</div>`);
     } else if (loc.agentes && loc.agentes.publicacion && !loc.agentes.publicacion.whatsapp_configurado) {
       out.push(`<div class="banner warn"><strong>Falta el número de WhatsApp.</strong> Configúralo en <code>config_publicacion.json</code> para que los comentarios de las fichas sean válidos.</div>`);
+    } else if (d.whatsapp_config && !(d.whatsapp_config.callmebot || d.whatsapp_config.meta)) {
+      out.push(`<div class="banner warn"><strong>Las alertas por WhatsApp aún no están configuradas.</strong> Agrega <code>CALLMEBOT_APIKEY</code> en el <code>.env</code> de la VM y usa “Probar WhatsApp”.</div>`);
     }
     if (active && !d.last_error && !(g.ahead > 0)) {
       out.push(`<div class="banner ok"><strong>Todo en orden.</strong> La automatización está activa y no hay errores pendientes en el log.</div>`);
@@ -383,6 +386,7 @@ function renderCards(d, active) {
   const ag = loc.agentes;
   const mo = loc.modelos;
   const whatsappOk = ag && ag.publicacion ? ag.publicacion.whatsapp_configurado : false;
+  const wa = d.whatsapp_config;
   cards.push(card(
     "Agentes y modelos", "local · Mac",
     badge(ag ? (ag.ok ? "DONE" : "ERROR") : null, "Sin datos"),
@@ -390,9 +394,10 @@ function renderCards(d, active) {
       kv("Roles OK", ag ? `${ag.roles_ok}/${ag.roles_total}` : "—"),
       kv("Modelo", mo ? mo.default : "—", true),
       kv("Costo", mo ? (mo.todo_gratuito ? "0 (gratuito)" : "Revisar") : "—"),
-      kv("WhatsApp", whatsappOk ? "Configurado" : "Pendiente"),
+      kv("WhatsApp fichas", whatsappOk ? "Configurado" : "Pendiente"),
+      kv("Alertas WA", wa ? (wa.proveedor ? `${wa.proveedor} · listo` : "Sin configurar") : "—"),
     ],
-    `<div class="actions"><button data-action="agentes">Verificar</button><button data-action="modelo">Cambiar modelo</button></div>`
+    `<div class="actions"><button data-action="agentes">Verificar</button><button data-action="modelo">Cambiar modelo</button><button data-action="probar_wa">Probar WhatsApp</button></div>`
   ));
 
   // Chrome
@@ -465,6 +470,7 @@ async function runAction(action) {
     validar: "Validando scripts y cron…",
     agentes: "Verificando agentes y modelos…",
     modelo: "Cambiando a otro modelo gratuito…",
+    probar_wa: "Enviando prueba por WhatsApp…",
   };
   busy = true;
   document.querySelectorAll("[data-action]").forEach((b) => (b.disabled = true));
