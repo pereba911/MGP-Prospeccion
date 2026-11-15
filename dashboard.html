@@ -133,7 +133,9 @@
     <div class="spacer"></div>
     <div class="meta">
       <div id="connPill" class="pill muted"><span class="dot"></span><span id="connText">Conectando…</span></div>
-      <div style="margin-top:6px">Actualizado: <span id="updated">—</span></div>
+      <div style="margin-top:4px">⏱ Sesión activa: <span id="sessionTimer" class="mono">00:00:00</span></div>
+      <div style="margin-top:2px">⚡ Latencia VM: <span id="latencyText" class="mono">—</span></div>
+      <div style="margin-top:2px">Actualizado: <span id="updated">—</span></div>
     </div>
     <button class="ghost" id="refreshBtn" title="Actualizar ahora">↻ Actualizar</button>
   </header>
@@ -160,6 +162,8 @@
   <section class="panel" style="margin-top:16px">
     <div class="toolbar">
       <h2>Acciones</h2>
+      <button class="primary" data-action="dryrun_lunes" style="background:#0f766e;border-color:#0f766e">⏱ Probar Lunes (Dry-Run)</button>
+      <button data-action="preparar_repo">🛠 Preparar Repositorio</button>
       <button data-action="autopush">Ejecutar autopush ahora</button>
       <button data-action="sync">Actualizar inventario</button>
       <button data-action="fotos">Regenerar datos y fotos</button>
@@ -259,6 +263,10 @@ function render(data) {
   $("#updated").textContent = data.checked_at || "—";
   if (ok && data.host) $("#host").textContent = `root@${data.host}`;
 
+  const lat = data.latency_ms;
+  const latEl = $("#latencyText");
+  if (latEl) latEl.textContent = lat != null ? `${lat} ms` : "—";
+
   const cron = (data.cron || {});
   const active = !!(cron.autopush && cron.alert_bot);
   $("#autoDot").className = "big-dot" + (active ? " on" : "");
@@ -278,7 +286,11 @@ function renderBanners(d, active) {
   const out = [];
   const g = d.git || {};
   if (!d.ok) {
-    out.push(`<div class="banner err"><strong>Sin conexión con la VM.</strong> ${esc(d.error || "")}<br>Verifica que <code>ssh ${esc("root@138.197.15.61")}</code> funcione sin contraseña.</div>`);
+    let errDetail = esc(d.error || "");
+    if (window.location.protocol === "file:") {
+      errDetail += `<br><em>Tip:</em> Como abriste el archivo directamente, asegúrate de que el servidor local esté corriendo ejecutando <code>python3 dashboard_server.py</code> en tu terminal, o entra directo a <a href="http://127.0.0.1:8765" style="color:inherit;text-decoration:underline">http://127.0.0.1:8765</a>.`;
+    }
+    out.push(`<div class="banner err"><strong>Sin conexión con la VM.</strong> ${errDetail}<br>Verifica que <code>ssh ${esc("root@138.197.15.61")}</code> funcione sin contraseña.</div>`);
   } else {
     if (d.last_error && /GH013|rejected|secret/i.test(d.last_error)) {
       out.push(`<div class="banner err"><strong>GitHub está bloqueando el push.</strong> ${esc(d.last_error)}</div>`);
@@ -441,9 +453,23 @@ function renderLog(d) {
   $("#logBox").scrollTop = 0;
 }
 
+const API_BASE = (window.location.protocol === "file:" || (window.location.port !== "8765" && window.location.hostname !== "127.0.0.1"))
+  ? "http://127.0.0.1:8765"
+  : "";
+
+let sessionSeconds = 0;
+setInterval(() => {
+  sessionSeconds++;
+  const h = String(Math.floor(sessionSeconds / 3600)).padStart(2, "0");
+  const m = String(Math.floor((sessionSeconds % 3600) / 60)).padStart(2, "0");
+  const s = String(sessionSeconds % 60).padStart(2, "0");
+  const el = $("#sessionTimer");
+  if (el) el.textContent = `${h}:${m}:${s}`;
+}, 1000);
+
 async function load(force = false) {
   try {
-    const res = await fetch("/api/status" + (force ? "?refresh=1" : ""), { cache: "no-store" });
+    const res = await fetch(API_BASE + "/api/status" + (force ? "?refresh=1" : ""), { cache: "no-store" });
     render(await res.json());
   } catch (err) {
     render({ ok: false, error: String(err), checked_at: "—" });
@@ -451,7 +477,7 @@ async function load(force = false) {
 }
 
 async function post(url, payload) {
-  const res = await fetch(url, {
+  const res = await fetch(API_BASE + url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload || {}),
@@ -477,6 +503,8 @@ async function setAutomation(enable) {
 
 async function runAction(action) {
   const names = {
+    dryrun_lunes: "Ejecutando Simulación Lunes (Dry-Run en VM)…",
+    preparar_repo: "Preparando e inicializando repositorio…",
     autopush: "Ejecutando autopush…",
     sync: "Actualizando inventario de Marketplace…",
     fotos: "Regenerando datos y fotos…",
