@@ -17,6 +17,7 @@ import sys
 import threading
 import time
 import webbrowser
+from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -178,6 +179,138 @@ def ejecutar_json_local(args: list[str], timeout: int = 45) -> dict:
         return json.loads(salida[inicio:])
 
 
+def obtener_calendario_y_sincronizacion() -> dict:
+    dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+    ahora = datetime.now()
+    hoy_idx = ahora.weekday()
+    hoy_nombre = dias_semana[hoy_idx]
+
+    props_dir = BASE_DIR / "propiedades"
+    propiedades = []
+    if props_dir.exists():
+        for p in sorted(os.listdir(props_dir)):
+            p_path = props_dir / p
+            ficha_path = p_path / "ficha_publicacion.json"
+            if p_path.is_dir() and ficha_path.exists():
+                try:
+                    p_data = json.loads(ficha_path.read_text(encoding="utf-8"))
+                    fotos_dir = p_path / "fotografias"
+                    n_fotos = len([x for x in os.listdir(fotos_dir) if x.lower().endswith((".jpg", ".jpeg", ".png"))]) if fotos_dir.exists() else 0
+                    propiedades.append({
+                        "folder": p,
+                        "id": p_data.get("propiedad_id", p),
+                        "nombre": p_data.get("nombre_oficial", p),
+                        "operacion": p_data.get("operacion", ""),
+                        "tipo": p_data.get("tipo_inmueble", ""),
+                        "precio": p_data.get("precio", ""),
+                        "ubicacion": p_data.get("ubicacion", ""),
+                        "fotos": n_fotos,
+                        "dias": p_data.get("estrategia_multigroup_poster", {}).get("dias_rotacion_sugeridos", []),
+                        "listas": p_data.get("estrategia_multigroup_poster", {}).get("listas_asignadas_obligatorias", []),
+                    })
+                except Exception:
+                    pass
+
+    # Marketplace JSON info
+    mp_json_path = BASE_DIR / "propiedades_marketplace.json"
+    mp_data = {}
+    if mp_json_path.exists():
+        try:
+            mp_data = json.loads(mp_json_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    ventas = [p for p in propiedades if p["operacion"].lower() == "venta"]
+    rentas = [p for p in propiedades if p["operacion"].lower() == "renta"]
+
+    dias = [
+        {
+            "dia": "Lunes",
+            "es_hoy": hoy_idx == 0,
+            "tipo": "Venta Residencial",
+            "badge": "Venta",
+            "variante": "Variante 1 (Ejecutiva)",
+            "propiedades": ventas,
+            "listas": ["1. Solo Venta (Inmuebles ZMG)", "7. Zona Providencia - Country Club", "12. Inmobiliarios ZMG"],
+            "nota": "Lanzamiento semanal de residencias y departamentos patrimoniales en venta."
+        },
+        {
+            "dia": "Martes",
+            "es_hoy": hoy_idx == 1,
+            "tipo": "Renta Residencial & Oficinas",
+            "badge": "Renta",
+            "variante": "Variante 1 (Ejecutiva)",
+            "propiedades": rentas,
+            "listas": ["11. Solo Renta (Casas y Deptos)", "2. Venta y Renta", "Zonas 6, 7 y 8", "12. Inmobiliarios ZMG"],
+            "nota": "Departamentos amueblados, estudios y corporativos ejecutivos."
+        },
+        {
+            "dia": "Miércoles",
+            "es_hoy": hoy_idx == 2,
+            "tipo": "Refuerzo y Red Inmobiliaria",
+            "badge": "Refuerzo",
+            "variante": "Variante 3 (Inversión)",
+            "propiedades": ventas[:1],
+            "listas": ["12. Inmobiliarios Generales y Asesores ZMG"],
+            "nota": "Impulso estratégico y bolsa compartida con colegas asesores de la ZMG."
+        },
+        {
+            "dia": "Jueves",
+            "es_hoy": hoy_idx == 3,
+            "tipo": "Venta Residencial (Rotación 2)",
+            "badge": "Venta",
+            "variante": "Variante 2 (Estilo de Vida)",
+            "propiedades": ventas,
+            "listas": ["1. Solo Venta (Inmuebles ZMG)", "7. Zona Providencia", "12. Inmobiliarios ZMG"],
+            "nota": "Segunda rotación de venta con cambio de copy fotográfico para evitar fatiga."
+        },
+        {
+            "dia": "Viernes",
+            "es_hoy": hoy_idx == 4,
+            "tipo": "Renta Residencial (Rotación 2)",
+            "badge": "Renta",
+            "variante": "Variante 2 (Estilo de Vida)",
+            "propiedades": rentas,
+            "listas": ["11. Solo Renta", "2. Venta y Renta", "Zonas 6, 7 y 8", "12. Inmobiliarios ZMG"],
+            "nota": "Cierre de semana para capturar interesados en mudanzas el fin de semana."
+        },
+        {
+            "dia": "Sábado",
+            "es_hoy": hoy_idx == 5,
+            "tipo": "Nichos Especiales & Terrenos",
+            "badge": "Especial",
+            "variante": "Variante Técnica / Inversión",
+            "propiedades": [p for p in propiedades if p["tipo"].lower() in ("terreno", "bodega", "oficina")],
+            "listas": ["3. Terrenos", "4. Oficinas", "5. Bodegas", "12. Asesores"],
+            "nota": "Propiedades comerciales y de uso mixto según inventario."
+        },
+        {
+            "dia": "Domingo",
+            "es_hoy": hoy_idx == 6,
+            "tipo": "Descanso Algorítmico Obligatorio",
+            "badge": "Descanso",
+            "variante": "Ninguna (Pausa total de seguridad)",
+            "propiedades": [],
+            "listas": [],
+            "nota": "Pausa total para enfriar la cuenta y reiniciar los contadores anti-spam de Facebook."
+        }
+    ]
+
+    return {
+        "hoy_idx": hoy_idx,
+        "hoy_nombre": hoy_nombre,
+        "fecha_actual": ahora.strftime("%Y-%m-%d"),
+        "total_propiedades_activas": len(propiedades),
+        "marketplace_sync": {
+            "total_en_marketplace": mp_data.get("total_publicaciones", 0),
+            "ultima_actualizacion": mp_data.get("ultima_actualizacion", "—"),
+            "propiedades_activas_en_repo": len(propiedades),
+            "sincronizado_local": len(propiedades) > 0,
+        },
+        "dias": dias
+    }
+
+
 def get_status(force: bool = False) -> dict:
     with _lock:
         if not force and _cache["data"] and (time.time() - _cache["ts"]) < CACHE_TTL:
@@ -203,6 +336,12 @@ def get_status(force: bool = False) -> dict:
         data["local"] = {"repo": repo, "agentes": agentes, "modelos": modelos}
     except Exception as exc:  # noqa: BLE001
         data["local"] = {"error": redact(str(exc))}
+
+    # Calendario y vinculación de Marketplace con Repositorio
+    try:
+        data["calendario_semanal"] = obtener_calendario_y_sincronizacion()
+    except Exception as exc:  # noqa: BLE001
+        data["calendario_semanal"] = {"error": str(exc)}
 
     with _lock:
         _cache["ts"] = time.time()

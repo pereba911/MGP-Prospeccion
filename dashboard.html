@@ -121,6 +121,47 @@
   dialog input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; margin-bottom: 14px; }
   dialog .row { display: flex; justify-content: flex-end; gap: 8px; }
   .fine { color: var(--muted); font-size: 11.5px; margin-top: 14px; text-align: center; }
+
+  /* Estilos del Calendario Semanal y Vinculación */
+  .calendar-panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 18px; margin-bottom: 16px;
+  }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .cal-header h2 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 12px; }
+  .cal-day {
+    border: 1px solid var(--line); border-radius: 10px; padding: 13px; background: #fafbfc;
+    display: flex; flex-direction: column; gap: 7px; transition: border-color .15s, box-shadow .15s;
+  }
+  .cal-day.today {
+    border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+  }
+  .cal-day-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+  .cal-day-name { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  .cal-tag-today { background: #2563eb; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; letter-spacing: .5px; }
+  .cal-type { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+  .cal-variant { font-size: 11px; color: var(--muted); }
+  .cal-props { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .cal-prop-item {
+    background: #fff; border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px;
+    display: flex; flex-direction: column; gap: 3px; font-size: 12px;
+  }
+  .cal-day.today .cal-prop-item { border-color: #bfdbfe; background: #ffffff; }
+  .cal-prop-title { font-weight: 600; color: var(--ink); line-height: 1.3; }
+  .cal-prop-meta { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; margin-top: 2px; }
+  .sync-badge-box {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px;
+    background: #f8fafc; border: 1px solid var(--line); border-radius: 9px; padding: 12px; margin-bottom: 14px;
+  }
+  .sync-stat { display: flex; flex-direction: column; gap: 2px; }
+  .sync-stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; font-weight: 600; }
+  .sync-stat-val { font-size: 13px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+  .today-banner {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 9px;
+    background: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; font-size: 13px; margin-bottom: 14px;
+  }
+  .today-banner strong { font-size: 14px; color: #0284c7; }
 </style>
 </head>
 <body>
@@ -154,6 +195,13 @@
     <div class="toolbar">
       <button class="primary" id="btnOn">Encender automatización</button>
       <button class="danger" id="btnOff">Detener</button>
+    </div>
+  </section>
+
+  <!-- Calendario Semanal y Vinculación con Marketplace/GitHub -->
+  <section class="calendar-panel" id="calendarSection">
+    <div class="cal-header">
+      <h2>📅 Cargando calendario semanal y sincronización…</h2>
     </div>
   </section>
 
@@ -278,8 +326,120 @@ function render(data) {
   $("#btnOff").disabled = busy || !ok || !active;
 
   renderBanners(data, active);
+  renderCalendar(data);
   renderCards(data, active);
   renderLog(data);
+}
+
+function renderCalendar(d) {
+  const cal = d.calendario_semanal;
+  const section = $("#calendarSection");
+  if (!section) return;
+  if (!cal || cal.error) {
+    section.innerHTML = `<div class="banner warn" style="margin:0"><strong>Calendario:</strong> ${esc((cal && cal.error) || "Sin datos de rotación semanal")}</div>`;
+    return;
+  }
+
+  const sync = cal.marketplace_sync || {};
+  const g = d.git || {};
+  const gitAhead = g.ahead != null ? g.ahead : 0;
+  const gitBehind = g.behind != null ? g.behind : 0;
+  const gitSyncText = (gitAhead === 0 && gitBehind === 0 && !g.dirty)
+    ? `<span style="color:var(--ok)">✓ Sincronizado</span>`
+    : `<span style="color:var(--warn)">${gitAhead > 0 ? gitAhead + " por subir" : ""}${gitBehind > 0 ? " " + gitBehind + " por bajar" : ""}${g.dirty ? " (cambios locales)" : ""}</span>`;
+
+  let todayHtml = "";
+  const hoyDia = (cal.dias || []).find((x) => x.es_hoy);
+  if (hoyDia) {
+    todayHtml = `
+      <div class="today-banner">
+        <div>
+          <span>Hoy es <strong>${esc(cal.hoy_nombre)}</strong> (${esc(cal.fecha_actual || "")})</span> &nbsp;·&nbsp;
+          <span>Publicación activa: <strong>${esc(hoyDia.tipo)}</strong> (${esc(hoyDia.badge)})</span><br>
+          <span style="font-size:12px;opacity:0.9">${esc(hoyDia.nota)}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  const syncBoxHtml = `
+    <div class="sync-badge-box">
+      <div class="sync-stat">
+        <span class="sync-stat-label">Día de la Semana</span>
+        <span class="sync-stat-val">📍 ${esc(cal.hoy_nombre)} <span class="badge ok">${esc(cal.fecha_actual || "")}</span></span>
+      </div>
+      <div class="sync-stat">
+        <span class="sync-stat-label">Marketplace Escaneado</span>
+        <span class="sync-stat-val">🏷 ${esc(sync.total_en_marketplace || 0)} publicaciones <span class="badge ${sync.total_en_marketplace > 0 ? "ok" : "warn"}">${esc(sync.ultima_actualizacion || "Reciente")}</span></span>
+      </div>
+      <div class="sync-stat">
+        <span class="sync-stat-label">Propiedades en Repo</span>
+        <span class="sync-stat-val">📦 ${esc(cal.total_propiedades_activas || 0)} paquetes listos</span>
+      </div>
+      <div class="sync-stat">
+        <span class="sync-stat-label">Sincronización GitHub</span>
+        <span class="sync-stat-val">🐙 ${gitSyncText}</span>
+      </div>
+    </div>
+  `;
+
+  let daysCardsHtml = "";
+  for (const day of (cal.dias || [])) {
+    const isToday = !!day.es_hoy;
+    let badgeClass = "badge";
+    if (day.badge === "Venta") badgeClass += " ok";
+    else if (day.badge === "Renta") badgeClass += " ok";
+    else if (day.badge === "Refuerzo") badgeClass += " warn";
+    else if (day.badge === "Descanso") badgeClass += " muted";
+    else badgeClass += " warn";
+
+    let propsHtml = "";
+    if (day.propiedades && day.propiedades.length > 0) {
+      propsHtml = `<ul class="cal-props">` + day.propiedades.map((p) => `
+        <li class="cal-prop-item">
+          <div class="cal-prop-title">${esc(p.nombre)}</div>
+          <div class="cal-prop-meta">
+            <span><strong>${esc(p.precio)}</strong> · ${esc(p.ubicacion)}</span>
+            <span>📷 ${esc(p.fotos)} fotos</span>
+          </div>
+        </li>
+      `).join("") + `</ul>`;
+    } else {
+      propsHtml = `<div class="empty" style="margin-top:6px">Sin publicaciones programadas (descanso de seguridad).</div>`;
+    }
+
+    daysCardsHtml += `
+      <div class="cal-day ${isToday ? "today" : ""}">
+        <div class="cal-day-head">
+          <div class="cal-day-name">
+            ${esc(day.dia)}
+            ${isToday ? `<span class="cal-tag-today">HOY</span>` : ""}
+          </div>
+          <span class="${badgeClass}">${esc(day.badge)}</span>
+        </div>
+        <div class="cal-type">${esc(day.tipo)}</div>
+        <div class="cal-variant">${esc(day.variante)}</div>
+        ${propsHtml}
+        <div style="font-size:11px;color:var(--muted);margin-top:auto;padding-top:6px;border-top:1px dashed var(--line);">
+          ${day.listas && day.listas.length ? `<strong>Listas MGP:</strong> ${esc(day.listas.slice(0, 2).join(", "))}${day.listas.length > 2 ? ` (+${day.listas.length - 2})` : ""}` : `<em>Pausa anti-spam</em>`}
+        </div>
+      </div>
+    `;
+  }
+
+  section.innerHTML = `
+    <div class="cal-header">
+      <div>
+        <h2>📅 Calendario Semanal de Publicaciones y Sincronización</h2>
+        <div class="sub">Rotación automatizada de inventario por día, variantes de copy y vinculación con Marketplace y GitHub.</div>
+      </div>
+    </div>
+    ${todayHtml}
+    ${syncBoxHtml}
+    <div class="cal-grid">
+      ${daysCardsHtml}
+    </div>
+  `;
 }
 
 function renderBanners(d, active) {
