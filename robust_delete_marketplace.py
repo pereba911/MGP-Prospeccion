@@ -4,10 +4,17 @@ import time
 import json
 import re
 import argparse
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException, WebDriverException
+try:
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.common.by import By
+    from selenium.common.exceptions import NoSuchElementException, WebDriverException
+except ImportError:
+    webdriver = None
+    Options = None
+    By = None
+    NoSuchElementException = Exception
+    WebDriverException = Exception
 
 # ---------------------------------------------------------------------------
 # Configuration
