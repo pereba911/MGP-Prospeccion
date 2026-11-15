@@ -107,3 +107,27 @@ La rotación exacta por propiedad vive en `dias_rotacion_sugeridos` dentro de ca
 2. Al correr la sincronización quincenal, el sistema actualiza el estado en `relacion_propiedades_marketplace.md`.
 3. Retiras manualmente la propiedad de `CATALOGO_PROPIEDADES` y ejecutas `python3 organizador_propiedades_autonomo.py`; la carpeta obsoleta se elimina y deja de republicarse.
 4. En MultiGroup Poster, se cancela o pausa la campaña recurrente vinculada a esa propiedad.
+
+---
+
+## 5. Regla de Idempotencia y Prevención de Duplicados
+
+### ¿Qué sucede si la automatización se ejecuta un día diferente (ej. domingo) o se vuelve a disparar?
+
+Para evitar saturación de publicaciones, duplicados accidentales o bloqueos algorítmicos de Facebook, el sistema opera bajo una **estricta regla de idempotencia**:
+
+1. **En el Repositorio y Git (`autopush.sh`):**
+   - El script realiza una comprobación de estado (`git status --porcelain`). Si la sincronización se ejecutó en domingo y no existen archivos nuevos ni modificados el lunes por la mañana, **no genera commits vacíos** y no vuelve a subir nada innecesariamente (*"Everything up-to-date"*).
+   - El registro de auditoría en `status/scheduler_validator.json` actualiza la marca de tiempo de verificación sin alterar el historial de git.
+
+2. **En la Extensión MultiGroup Poster (Idempotencia de Agendamiento):**
+   - **Regla de detección previa:** Antes de registrar o programar una campaña, el agente o script verifica el listado de tareas en cola (`scheduledPosts` / pestaña "Programadas").
+   - **Acción ante campaña ya agendada:** Si la propiedad ya cuenta con una programación recurrente activa para el ciclo semanal en curso:
+     - **SE IGNORA (Skip Seguro):** No se crea una segunda tarea ni se duplica en cola.
+     - **NO se hace overwrite destructivo:** La programación preexistente se preserva con sus días y horas ya configurados.
+     - Se emite un aviso en el log indicando: `Campaña [ID_PROPIEDAD] ya agendada para rotación activa. Omitiendo duplicación.`
+   - **Solo se re-agenda si:** La tarea anterior fue completada/eliminada, la propiedad cambió de estatus (ej. cambio de precio en `ficha_publicacion.json`), o la cola se encuentra vacía.
+
+3. **Operación Totalmente Autónoma vs. Control Manual:**
+   - **Autonomía 100% de fondo:** La automatización está instalada en el `crontab` a nivel sistema operativo en la VM (`138.197.15.61`). Se ejecuta sola y de manera perpetua cada lunes a las 10:00 y cada 5 minutos (alert-bot), sin que el usuario tenga que abrir la terminal, encender su Mac o tocar botones.
+   - **Función de los botones en el Dashboard:** Los botones "Encender" y "Detener" son un *Kill-Switch* de emergencia. Si el usuario desea congelar temporalmente las campañas, presiona "Detener" y los cron jobs se retiran. Al presionar "Encender", se reinstalan y continúan su ciclo autónomo sin intervención manual adicional.

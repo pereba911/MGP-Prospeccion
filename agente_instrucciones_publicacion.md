@@ -134,3 +134,15 @@ stateDiagram-v2
 1. Localizar la propiedad en el registro de campañas.
 2. Ingresar a Multigroup Poster y eliminar la tarea programada asociada a esa propiedad.
 3. Si la publicación quedó reciente y continúa recibiendo comentarios, publicar un comentario de cierre: `Propiedad Vendida / Agradecemos el interés`.
+
+---
+
+## 7. Regla de Idempotencia y No-Duplicación en Re-ejecuciones
+
+Para proteger la cuenta de Facebook y garantizar que no se publiquen campañas repetidas:
+
+1. **Inspección Previa Obligatoria:** Antes de agendar o enviar cualquier post, el agente debe consultar la lista de publicaciones programadas (`scheduledPosts` en MultiGroup Poster).
+2. **Si ya existe programación activa para el día:**
+   - **NO se sobrescribe ni se duplica:** La tarea preexistente se mantiene intacta.
+   - **Acción:** Se marca como *omitida por idempotencia* y se avanza a la siguiente propiedad.
+3. **Sincronización Git Idempotente:** Si la automatización se ejecuta en un día sin cambios (o varias veces el mismo día), Git no creará commits vacíos ni duplicados, manteniendo el repositorio limpio.
