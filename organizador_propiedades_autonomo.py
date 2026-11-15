@@ -50,6 +50,8 @@ def clean_no_emojis(text):
         "\U00002600-\U000026FF"
         "\U00002B50"
         "\U00002728"
+        "\u200d"
+        "\ufe0e-\ufe0f"
         "]+", flags=re.UNICODE
     )
     text = emoji_pattern.sub('', text)

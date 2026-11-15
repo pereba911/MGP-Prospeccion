@@ -11,3 +11,10 @@ dashboard_server.log
 fotos_batch/
 portal_data.json
 propiedades/*/fotografias_procesadas/
+
+# Ruflo local secrets and runtime data
+.env.local
+.env.*.local
+.claude-flow/data/
+.claude-flow/logs/
+.claude-flow/sessions/
