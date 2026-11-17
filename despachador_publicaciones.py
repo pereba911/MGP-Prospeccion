@@ -240,7 +240,7 @@ def asegurar_canal_control() -> bool:
 
 
 def inyectar_agente_cdp() -> tuple[bool, str]:
-    """Inyecta agent.js en Chrome vía CDP si no está activo."""
+    """Inyecta agent.js en Chrome vía CDP si no está activo, abriendo la pestaña si hace falta."""
     tools_dir = Path("/home/poster/tools")
     if not tools_dir.exists():
         return False, "tools_dir no existe en este entorno (solo aplica en la VM)."
@@ -252,7 +252,21 @@ def inyectar_agente_cdp() -> tuple[bool, str]:
         if not agent_js_path.exists():
             return False, f"No existe {agent_js_path}"
 
-        p = cdp.conectar("chrome-extension://bffigfjkllaipccbpnmckgfhmdmlgdda/index.html")
+        ext_url = "chrome-extension://bffigfjkllaipccbpnmckgfhmdmlgdda/index.html"
+        p = None
+        try:
+            p = cdp.conectar(ext_url)
+        except Exception:
+            # Abrir la pestaña si no estaba abierta
+            try:
+                open_url = f"http://127.0.0.1:9222/json/new?{ext_url}"
+                req = urllib.request.Request(open_url, method="PUT")
+                urllib.request.urlopen(req, timeout=5)
+                time.sleep(2)
+                p = cdp.conectar(ext_url)
+            except Exception as e:
+                return False, f"No se pudo abrir ni conectar a la pestaña de MGP: {e}"
+
         is_auto = p.eval("window.__mgpAuto")
         if is_auto:
             p.close()
