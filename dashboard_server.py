@@ -92,7 +92,7 @@ out["git"]["behind"] = int(ab[0]) if ab and ab[0].isdigit() else None
 out["git"]["dirty"] = bool(sh("git status --porcelain"))
 
 names = ["repo_init", "autopush_builder", "data_collector", "content_gen_1",
-         "content_gen_2", "content_gen_3", "scheduler_validator", "alert_bot"]
+         "content_gen_2", "content_gen_3", "scheduler_validator", "alert_bot", "despachador"]
 st = {}
 for n in names:
     try:
@@ -443,6 +443,16 @@ print("Actualizado en .env (600)")
     return {"ok": proc.returncode == 0, "output": redact((proc.stdout + proc.stderr).strip())}
 
 
+def action_despachar() -> dict:
+    proc = ssh(f"python3 {REMOTE_DIR}/despachador_publicaciones.py --force --json", timeout=60)
+    try:
+        data = json.loads(proc.stdout.strip().splitlines()[-1])
+        data["ok"] = True
+        return data
+    except Exception:
+        return {"ok": proc.returncode == 0, "output": redact((proc.stdout + proc.stderr).strip())[-2000:]}
+
+
 def action_dryrun_lunes() -> dict:
     script = r'''
 import os, time, json, subprocess
@@ -602,6 +612,8 @@ class Handler(BaseHTTPRequestHandler):
             accion = payload.get("action")
             if accion == "dryrun_lunes":
                 result = action_dryrun_lunes()
+            elif accion == "despachar_ahora":
+                result = action_despachar()
             elif accion == "preparar_repo":
                 result = action_preparar_repo()
             else:

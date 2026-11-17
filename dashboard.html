@@ -210,6 +210,7 @@
   <section class="panel" style="margin-top:16px">
     <div class="toolbar">
       <h2>Acciones</h2>
+      <button class="primary" data-action="despachar_ahora" style="background:#2563eb;border-color:#2563eb">🚀 Despachar Publicaciones Hoy</button>
       <button class="primary" data-action="dryrun_lunes" style="background:#0f766e;border-color:#0f766e">⏱ Probar Lunes (Dry-Run)</button>
       <button data-action="preparar_repo">🛠 Preparar Repositorio</button>
       <button data-action="autopush">Ejecutar autopush ahora</button>
@@ -583,6 +584,19 @@ function renderCards(d, active) {
       kv("Alertas WA", wa ? (wa.proveedor ? `${wa.proveedor} · listo` : "Sin configurar") : "—"),
     ],
     `<div class="actions"><button data-action="agentes">Verificar</button><button data-action="modelo">Cambiar modelo</button><button data-action="probar_wa">Probar WhatsApp</button></div>`
+  ));
+
+  // Despachador de Publicaciones (MultiGroup Poster)
+  const desp = s.despachador;
+  cards.push(card(
+    "Despachador MGP", "rotación diaria · 10:15",
+    badge(desp ? desp.state : null, "Listo"),
+    [
+      kv("Día / Estado", desp ? `${desp.dia || "—"} (${desp.state || "—"})` : "Programado en cron"),
+      kv("Enviados hoy", desp && desp.jobs_enviados ? desp.jobs_enviados.length : 0),
+      kv("Última acción", desp ? (desp.updated || "—").slice(11, 19) : "Lun-Vie 10:15 AM"),
+    ],
+    `<div class="actions"><button data-action="despachar_ahora">Despachar hoy</button></div>`
   ));
 
   // Chrome
